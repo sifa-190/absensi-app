@@ -2,22 +2,30 @@
 
 namespace App\Imports;
 
+use App\Models\Karyawan;
 use App\Models\PresensiMentah;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Carbon\Carbon; 
 
 class PresensiImport implements ToModel
 {
-    /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
-public function model(array $row)
-{
-    return new PresensiMentah([
-       'karyawan_id'   => $row[0], // Ambil dari kolom ID (0)
-       'waktu_absensi' => $row[2], // Ambil dari kolom Waktu (2)
-       'status_mesin'  => $row[8], // Ambil dari kolom Status (8)
-    ]);
-}
+        public function model(array $row)
+        {
+            // skip header
+            if ($row[0] == 'ID') return null;
+
+            $karyawan = \App\Models\Karyawan::firstOrCreate(
+                ['id_mesin' => $row[0]], 
+                [
+                    'nama' => $row[1],
+                    'jabatan' => '-' // default
+                ]
+            );
+
+            return new \App\Models\PresensiMentah([
+                'karyawan_id' => $karyawan->id, 
+                'waktu_absensi' => date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $row[2]))),
+                'status_mesin' => $row[8],
+            ]);
+        }
 }
