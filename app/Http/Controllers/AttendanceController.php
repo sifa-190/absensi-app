@@ -10,11 +10,11 @@ use App\Models\PresensiMentah; // TAMBAHAN
 class AttendanceController extends Controller
 {
     // 🔥 TAMPILKAN DATA KE DASHBOARD
-    public function index()
-    {
-        $data = PresensiMentah::with('karyawan')->latest()->get();
-        return view('dashboard', compact('data'));
-    }
+        public function index()
+        {
+            $data = PresensiMentah::all(); // 🔥 ambil dari presensi_mentah
+            return view('dashboard', compact('data'));
+        }
 
     // 🔥 IMPORT CSV
     public function importCsv(Request $request) 
