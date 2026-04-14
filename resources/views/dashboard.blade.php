@@ -3,370 +3,334 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Absensi Kipin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Kipin — Dashboard Absensi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg:        #f0f4ff;
+            --bg2:       #e8eeff;
+            --bg3:       #ffffff;
+            --card:      #ffffff;
+            --border:    rgba(99,102,241,0.12);
+            --border2:   rgba(99,102,241,0.25);
+            --accent:    #6366f1;
+            --accent2:   #4f46e5;
+            --accent3:   #818cf8;
+            --accentbg:  #eef2ff;
+            --teal:      #0d9488;
+            --tealbg:    #ccfbf1;
+            --amber:     #d97706;
+            --amberbg:   #fef3c7;
+            --rose:      #e11d48;
+            --rosebg:    #ffe4e6;
+            --green:     #16a34a;
+            --greenbg:   #dcfce7;
+            --text:      #1e1b4b;
+            --text2:     #4338ca;
+            --text3:     #6366f1;
+            --textmute:  #64748b;
+            --textlight: #94a3b8;
+            --radius:    16px;
+            --radius-sm: 10px;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background: #f0f4ff;
+            background: var(--bg);
             min-height: 100vh;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text);
+            overflow-x: hidden;
         }
 
-        /* ─── LOADING OVERLAY ─── */
-        .loading-overlay {
-            display: none;
+        body::before {
+            content: '';
             position: fixed; inset: 0;
-            background: rgba(255,255,255,0.9);
-            z-index: 9999;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 18px;
+            background-image:
+                linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+            background-size: 36px 36px;
+            pointer-events: none; z-index: 0;
+        }
+
+        .glow-blob { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
+        .glow-1 { width: 600px; height: 600px; background: rgba(99,102,241,0.10); top: -160px; left: -120px; }
+        .glow-2 { width: 500px; height: 500px; background: rgba(13,148,136,0.07); bottom: 0; right: -100px; }
+        .glow-3 { width: 300px; height: 300px; background: rgba(225,29,72,0.05); top: 40%; left: 50%; }
+
+        /* LOADING */
+        .loading-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(240,244,255,0.92); backdrop-filter: blur(8px);
+            z-index: 9999; flex-direction: column;
+            align-items: center; justify-content: center; gap: 20px;
         }
         .loading-overlay.show { display: flex; }
-        .spinner {
-            width: 60px; height: 60px;
-            border: 5px solid #e0e7ff;
-            border-top-color: #6366f1;
-            border-radius: 50%;
-            animation: spin .75s linear infinite;
-        }
-        .loading-card {
-            background: #fff;
-            border: 1px solid #e0e7ff;
-            border-radius: 16px;
-            padding: 2rem 2.5rem;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(99,102,241,0.12);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-        .loading-title { font-size: 15px; font-weight: 700; color: #6366f1; }
-        .loading-sub   { font-size: 12px; color: #6b7280; }
-        .loading-bar-wrap {
-            width: 200px; height: 4px;
-            background: #e0e7ff;
-            border-radius: 99px;
-            overflow: hidden;
-        }
-        .loading-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #6366f1, #818cf8);
-            border-radius: 99px;
-            animation: barSlide 1.2s ease-in-out infinite;
-        }
+        .spinner { width: 48px; height: 48px; border: 3px solid #e0e7ff; border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
+        .loading-text { font-size: 14px; color: var(--textmute); font-weight: 600; }
+        .loading-bar-wrap { width: 180px; height: 3px; background: #e0e7ff; border-radius: 99px; overflow: hidden; }
+        .loading-bar { height: 100%; width: 40%; background: linear-gradient(90deg, var(--accent), var(--teal)); border-radius: 99px; animation: barSlide 1.4s ease-in-out infinite; }
 
-        /* ─── WRAP ─── */
-        .dash-wrap { padding: 1.5rem; max-width: 1200px; margin: 0 auto; }
+        /* WRAP */
+        .wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; }
 
-        /* ─── TOPBAR ─── */
+        /* TOPBAR */
         .topbar {
-            background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
-            border-radius: 16px;
-            padding: 1.2rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 24px rgba(99,102,241,0.22);
-            animation: slideDown .5s ease;
+            display: flex; align-items: center; gap: 18px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #0d9488 100%);
+            border-radius: 20px; padding: 1.1rem 1.6rem;
+            margin-bottom: 1.5rem; animation: slideDown .5s ease;
+            position: relative; overflow: hidden;
+            box-shadow: 0 8px 32px rgba(99,102,241,0.28), 0 2px 8px rgba(99,102,241,0.15);
         }
-        .topbar-icon {
-            width: 46px; height: 46px; border-radius: 12px;
-            background: rgba(255,255,255,0.2);
-            display: flex; align-items: center; justify-content: center;
-            animation: float 3s ease-in-out infinite;
-            flex-shrink: 0;
+        .topbar::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 80% 50%, rgba(255,255,255,0.08) 0%, transparent 60%);
+            pointer-events: none;
         }
-        .topbar-icon svg { width: 24px; height: 24px; fill: #fff; }
-        .topbar-title { font-size: 18px; font-weight: 700; color: #fff; margin: 0; }
-        .topbar-sub   { font-size: 12px; color: rgba(255,255,255,0.75); margin: 2px 0 0; }
-        .pulse-dot {
-            display: inline-block; width: 7px; height: 7px;
-            border-radius: 50%; background: #a3e635;
-            margin-right: 5px; animation: pulse 1.8s infinite;
-        }
-        .topbar-clock { font-size: 20px; font-weight: 700; color: #fff; line-height: 1; }
-        .topbar-date  { font-size: 11px; color: rgba(255,255,255,0.8); margin-top: 3px; }
 
-        /* ─── STAT GRID ─── */
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 14px;
-            margin-bottom: 1.5rem;
+        .logo-wrap {
+            width: 68px; height: 68px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.18);
+            border: 2px solid rgba(255,255,255,0.35);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; overflow: hidden;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.25);
         }
+        .logo-wrap img { width: 54px; height: 54px; object-fit: contain; }
+        .logo-fallback { width: 36px; height: 36px; fill: #fff; display: none; }
+
+        .topbar-info { flex: 1; }
+        .topbar-title { font-size: 19px; font-weight: 800; color: #fff; letter-spacing: -.03em; line-height: 1; }
+        .topbar-sub { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 5px; display: flex; align-items: center; gap: 7px; }
+        .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #a3e635; box-shadow: 0 0 6px #a3e635; animation: pulse 2s infinite; }
+
+        .topbar-right { text-align: right; flex-shrink: 0; }
+        .clock { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 600; color: #fff; letter-spacing: -.02em; line-height: 1; }
+        .date-label { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+
+        /* STAT GRID */
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 1.5rem; }
         .stat-card {
-            background: #fff;
-            border: 1px solid #e0e7ff;
-            border-radius: 14px;
-            padding: 1.1rem 1.25rem;
-            box-shadow: 0 2px 8px rgba(99,102,241,0.07);
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1.3rem 1.4rem;
+            position: relative; overflow: hidden;
             animation: fadeUp .5s ease both;
+            box-shadow: 0 2px 12px rgba(99,102,241,0.06);
+            transition: transform .2s, box-shadow .2s;
         }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(99,102,241,0.13); }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+        .c-total::before  { background: linear-gradient(90deg, #6366f1, #818cf8); }
+        .c-tepat::before  { background: linear-gradient(90deg, #16a34a, #4ade80); }
+        .c-lambat::before { background: linear-gradient(90deg, #d97706, #fbbf24); }
+        .c-cepat::before  { background: linear-gradient(90deg, #e11d48, #fb7185); }
         .stat-card:nth-child(1) { animation-delay: .05s; }
         .stat-card:nth-child(2) { animation-delay: .10s; }
         .stat-card:nth-child(3) { animation-delay: .15s; }
         .stat-card:nth-child(4) { animation-delay: .20s; }
-        .stat-label {
-            font-size: 11px; color: #6b7280; margin-bottom: 6px;
-            display: flex; align-items: center; gap: 5px;
-            font-weight: 600; text-transform: uppercase; letter-spacing: .05em;
-        }
-        .stat-val  { font-size: 28px; font-weight: 700; }
-        .v-total   { color: #6366f1; }
-        .v-tepat   { color: #16a34a; }
-        .v-lambat  { color: #b45309; }
-        .v-cepat   { color: #dc2626; }
-        .stat-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .dot-purple { background: #6366f1; }
-        .dot-green  { background: #16a34a; }
-        .dot-amber  { background: #b45309; }
-        .dot-red    { background: #dc2626; }
 
-        /* ─── CARD ─── */
-        .card-custom {
-            background: #fff;
-            border: 1px solid #e0e7ff;
-            border-radius: 16px;
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-            box-shadow: 0 2px 12px rgba(99,102,241,0.07);
-            animation: fadeUp .5s ease both;
-        }
-        .card-header-custom {
-            display: flex; align-items: center; gap: 10px;
-            padding: .9rem 1.25rem;
-            border-bottom: 1px solid #e0e7ff;
-            font-size: 14px; font-weight: 700; color: #1e1b4b;
-        }
-        .header-badge {
-            font-size: 10px; padding: 2px 9px; border-radius: 20px;
-            background: #ede9fe; color: #7c3aed; font-weight: 700;
-            border: 1px solid #c4b5fd;
-        }
-        .card-body-custom { padding: 1.25rem; }
+        .stat-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+        .stat-icon svg { width: 20px; height: 20px; }
+        .icon-total  { background: var(--accentbg); } .icon-total svg  { stroke: var(--accent); }
+        .icon-tepat  { background: var(--greenbg);  } .icon-tepat svg  { stroke: var(--green);  }
+        .icon-lambat { background: var(--amberbg);  } .icon-lambat svg { stroke: var(--amber);  }
+        .icon-cepat  { background: var(--rosebg);   } .icon-cepat svg  { stroke: var(--rose);   }
 
-        /* ─── FILTER ─── */
-        .filter-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto;
-            gap: 12px;
-            align-items: end;
-        }
-        .filter-group { display: flex; flex-direction: column; gap: 4px; }
-        .filter-label {
-            font-size: 11px; font-weight: 700; color: #6b7280;
-            text-transform: uppercase; letter-spacing: .05em;
-        }
-        .filter-input {
-            padding: 8px 12px; font-size: 13px;
-            border: 1.5px solid #e0e7ff;
-            border-radius: 9px;
-            background: #f8f9ff;
-            color: #1e1b4b;
-            outline: none;
-            transition: border-color .2s, box-shadow .2s;
-        }
-        .filter-input:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
-        }
-        .btn-reset {
-            padding: 8px 16px; font-size: 12px; font-weight: 600;
-            background: #f1f5f9; color: #6b7280;
-            border: 1.5px solid #e0e7ff;
-            border-radius: 9px; cursor: pointer;
-            transition: all .2s; white-space: nowrap;
-        }
-        .btn-reset:hover { background: #ede9fe; color: #6366f1; border-color: #a5b4fc; }
+        .stat-label { font-size: 11px; font-weight: 700; color: var(--textmute); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; }
+        .stat-val { font-size: 34px; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+        .v-total { color: var(--accent); } .v-tepat { color: var(--green); }
+        .v-lambat { color: var(--amber); } .v-cepat  { color: var(--rose);  }
 
-        /* ─── UPLOAD ─── */
-        .upload-input {
-            flex: 1; padding: 9px 13px; font-size: 13px;
-            border: 1.5px dashed #a5b4fc;
-            border-radius: 10px;
-            background: #f5f3ff;
-            color: #1e1b4b;
-            transition: border-color .2s;
-        }
-        .upload-input:hover { border-color: #6366f1; }
-        .upload-input::file-selector-button {
-            background: #ede9fe; color: #7c3aed;
-            border: none; padding: 4px 12px;
-            border-radius: 6px; cursor: pointer;
-            font-size: 12px; font-weight: 600; margin-right: 8px;
-        }
-        .btn-upload {
-            padding: 9px 22px; font-size: 13px; font-weight: 700;
-            background: linear-gradient(135deg, #6366f1, #818cf8);
-            color: #fff; border: none;
-            border-radius: 10px; cursor: pointer;
-            transition: opacity .2s, transform .1s;
-            white-space: nowrap;
-            box-shadow: 0 2px 8px rgba(99,102,241,0.25);
-            display: flex; align-items: center; gap: 8px;
-        }
-        .btn-upload:hover   { opacity: .88; }
-        .btn-upload:active  { transform: scale(.97); }
+        /* CARD */
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1.25rem; overflow: hidden; animation: fadeUp .5s ease both; box-shadow: 0 2px 12px rgba(99,102,241,0.06); }
+        .card-head { display: flex; align-items: center; gap: 10px; padding: .9rem 1.4rem; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700; color: var(--text); background: linear-gradient(90deg, #fafbff 0%, #fff 100%); }
+        .card-head-icon { width: 30px; height: 30px; border-radius: 9px; background: var(--accentbg); display: flex; align-items: center; justify-content: center; }
+        .card-head-icon svg { width: 15px; height: 15px; stroke: var(--accent); }
+        .chip { font-size: 10px; padding: 3px 10px; border-radius: 20px; background: var(--accentbg); color: var(--accent); border: 1px solid rgba(99,102,241,0.2); font-weight: 700; letter-spacing: .04em; margin-left: auto; }
+        .card-body { padding: 1.1rem 1.4rem; }
 
-        /* ─── RESULT INFO ─── */
-        .result-info {
-            font-size: 12px; color: #6b7280;
-            padding: 6px 1.25rem;
-            background: #f8f9ff;
-            border-bottom: 1px solid #e0e7ff;
-        }
-        .result-info strong { color: #6366f1; }
+        /* ALERTS */
+        .alert-ok  { background: var(--greenbg); border: 1px solid #bbf7d0; color: #15803d; border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; margin-bottom: 1rem; animation: fadeUp .4s ease; font-weight: 600; }
+        .alert-err { background: var(--rosebg);  border: 1px solid #fecdd3; color: #be123c; border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; margin-bottom: 1rem; animation: fadeUp .4s ease; font-weight: 600; }
 
-        /* ─── TABLE ─── */
+        /* UPLOAD */
+        .upload-zone { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .upload-input { flex: 1; min-width: 200px; padding: 10px 14px; font-size: 13px; border: 1.5px dashed rgba(99,102,241,0.3); border-radius: 10px; background: var(--accentbg); color: var(--text); font-family: inherit; transition: border-color .2s; }
+        .upload-input:hover { border-color: var(--accent); }
+        .upload-input::file-selector-button { background: white; color: var(--accent); border: 1px solid rgba(99,102,241,0.3); padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700; margin-right: 10px; font-family: inherit; }
+        .file-info { font-size: 11px; color: var(--textmute); margin-top: 8px; display: none; }
+        .btn-upload { padding: 10px 24px; font-size: 13px; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: none; border-radius: 10px; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 8px; transition: opacity .2s, transform .1s; white-space: nowrap; box-shadow: 0 4px 14px rgba(99,102,241,0.35); }
+        .btn-upload:hover { opacity: .88; } .btn-upload:active { transform: scale(.97); }
+        .btn-upload svg { width: 14px; height: 14px; stroke: #fff; }
+
+        /* FILTER */
+        .filter-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; align-items: end; }
+        .f-group { display: flex; flex-direction: column; gap: 5px; }
+        .f-label { font-size: 10px; font-weight: 700; color: var(--textmute); text-transform: uppercase; letter-spacing: .07em; }
+        .f-input { padding: 9px 12px; font-size: 13px; border: 1.5px solid rgba(99,102,241,0.15); border-radius: var(--radius-sm); background: #fafbff; color: var(--text); font-family: inherit; outline: none; transition: border-color .2s, box-shadow .2s; }
+        .f-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        .f-input option { background: #fff; }
+        .btn-reset { padding: 9px 16px; font-size: 12px; font-weight: 600; background: #f1f5f9; color: var(--textmute); border: 1.5px solid #e2e8f0; border-radius: var(--radius-sm); cursor: pointer; font-family: inherit; white-space: nowrap; transition: all .2s; }
+        .btn-reset:hover { border-color: var(--accent); color: var(--accent); background: var(--accentbg); }
+
+        /* RESULT BAR */
+        .result-bar { padding: 8px 1.4rem; font-size: 12px; color: var(--textmute); background: #fafbff; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+        .result-bar strong { color: var(--accent); font-weight: 700; }
+
+        /* PER PAGE SELECT */
+        .per-page-wrap { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--textmute); }
+        .per-page-sel { font-size: 12px; border: 1.5px solid rgba(99,102,241,0.15); border-radius: 7px; padding: 3px 8px; background: #fff; color: var(--text); font-family: inherit; cursor: pointer; outline: none; transition: border-color .2s; }
+        .per-page-sel:focus { border-color: var(--accent); }
+
+        /* TABLE */
+        .tbl-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        thead tr { background: #f5f3ff; }
-        th {
-            padding: 10px 14px; text-align: left;
-            font-weight: 700; font-size: 11px; color: #6b7280;
-            border-bottom: 1.5px solid #e0e7ff;
-            text-transform: uppercase; letter-spacing: .05em;
-        }
-        td {
-            padding: 11px 14px; color: #1e1b4b;
-            border-bottom: 1px solid #f1f5f9;
-            vertical-align: middle;
-        }
-        tbody tr { animation: fadeUp .35s ease both; }
+        thead tr { background: #f8faff; }
+        th { padding: 11px 16px; text-align: left; font-size: 10px; font-weight: 700; color: var(--textmute); border-bottom: 1.5px solid rgba(99,102,241,0.1); text-transform: uppercase; letter-spacing: .07em; white-space: nowrap; }
+        td { padding: 13px 16px; border-bottom: 1px solid rgba(99,102,241,0.06); vertical-align: middle; color: var(--text); }
         tbody tr:last-child td { border-bottom: none; }
-        tbody tr:hover td { background: #f5f3ff; transition: background .15s; }
+        tbody tr:hover td { background: #f5f7ff; transition: background .15s; }
 
-        /* ─── BADGES ─── */
-        .badge-custom {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 3px 10px; border-radius: 20px;
-            font-size: 11px; font-weight: 700;
-        }
-        .badge-masuk     { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
-        .badge-pulang    { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
-        .badge-terlambat { background: #fef9c3; color: #b45309; border: 1px solid #fde68a; }
-        .badge-cepat     { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
-        .badge-tepat     { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
-
-        /* ─── MISC ─── */
-        .pin-chip {
-            font-family: monospace; font-size: 12px;
-            background: #ede9fe; color: #6366f1;
-            padding: 3px 8px; border-radius: 6px; font-weight: 700;
-        }
-        .avatar {
-            width: 32px; height: 32px; border-radius: 50%;
-            background: linear-gradient(135deg, #6366f1, #818cf8);
-            color: #fff;
-            display: inline-flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: 700;
-            margin-right: 8px; flex-shrink: 0;
-        }
+        .avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--teal)); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; margin-right: 10px; flex-shrink: 0; letter-spacing: -.02em; box-shadow: 0 2px 8px rgba(99,102,241,0.25); }
         .nama-cell { display: flex; align-items: center; }
 
-        /* ─── ALERTS ─── */
-        .alert-custom-success {
-            background: #dcfce7; border: 1px solid #bbf7d0; color: #16a34a;
-            border-radius: 10px; padding: 10px 14px; font-size: 13px;
-            margin-bottom: 1rem; animation: fadeUp .4s ease;
-        }
-        .alert-custom-danger {
-            background: #fee2e2; border: 1px solid #fecaca; color: #dc2626;
-            border-radius: 10px; padding: 10px 14px; font-size: 13px;
-            margin-bottom: 1rem; animation: fadeUp .4s ease;
-        }
+        .pin { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; background: var(--accentbg); color: var(--accent); padding: 3px 9px; border-radius: 6px; border: 1px solid rgba(99,102,241,0.18); }
 
-        /* ─── EMPTY STATE ─── */
-        .empty-state { text-align: center; padding: 3rem; color: #9ca3af; }
-        .empty-icon  { font-size: 40px; margin-bottom: 12px; opacity: .5; }
-        .empty-text  { font-size: 14px; font-weight: 600; }
-        .empty-sub   { font-size: 12px; margin-top: 4px; }
+        .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+        .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+        .b-masuk     { background: var(--greenbg); color: #15803d; border: 1px solid #bbf7d0; } .b-masuk::before     { background: #16a34a; }
+        .b-pulang    { background: var(--rosebg);  color: #be123c; border: 1px solid #fecdd3; } .b-pulang::before    { background: #e11d48; }
+        .b-terlambat { background: var(--amberbg); color: #92400e; border: 1px solid #fde68a; } .b-terlambat::before { background: #d97706; }
+        .b-cepat     { background: var(--rosebg);  color: #be123c; border: 1px solid #fecdd3; } .b-cepat::before     { background: #e11d48; }
+        .b-tepat     { background: var(--accentbg); color: var(--accent2); border: 1px solid rgba(99,102,241,0.2); } .b-tepat::before { background: var(--accent); }
 
-        /* ─── FOOTER ─── */
-        .footer-copy {
-            text-align: center; padding: 1.5rem 0 1rem;
-            font-size: 12px; color: #9ca3af;
-            animation: fadeUp .5s .5s ease both;
+        /* PAGINATION */
+        .pg-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 1.4rem; flex-wrap: wrap; gap: 10px;
+            border-top: 1px solid rgba(99,102,241,0.08);
+            background: #fafbff;
         }
+        .pg-info { font-size: 12px; color: var(--textmute); font-weight: 500; }
+        .pg-btns { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+        .pg-btn {
+            min-width: 32px; height: 32px; padding: 0 8px;
+            border: 1.5px solid rgba(99,102,241,0.15);
+            background: #fff; color: var(--text);
+            border-radius: 8px; font-size: 12px; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-family: inherit; transition: all .15s; line-height: 1;
+        }
+        .pg-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--accentbg); }
+        .pg-btn:disabled { opacity: .35; cursor: not-allowed; }
+        .pg-btn.pg-active { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; box-shadow: 0 2px 8px rgba(99,102,241,0.3); }
+        .pg-ellipsis { font-size: 13px; padding: 0 4px; color: var(--textlight); line-height: 32px; }
 
-        /* ─── KEYFRAMES ─── */
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-16px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50%       { opacity: .3; transform: scale(.6); }
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50%       { transform: translateY(-5px); }
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes barSlide {
-            0%   { transform: translateX(-100%); }
-            50%  { transform: translateX(0%); }
-            100% { transform: translateX(100%); }
-        }
+        .empty { text-align: center; padding: 3.5rem 1rem; color: var(--textlight); }
+        .empty-icon { font-size: 40px; margin-bottom: 14px; }
+        .empty-text { font-size: 14px; font-weight: 700; color: var(--textmute); }
+        .empty-sub  { font-size: 12px; margin-top: 6px; }
 
-        /* ─── RESPONSIVE ─── */
-        @media (max-width: 768px) {
-            .stat-grid  { grid-template-columns: repeat(2, 1fr); }
-            .filter-row { grid-template-columns: 1fr; }
-            .dash-wrap  { padding: 1rem; }
-        }
+        .footer { text-align: center; padding: 1.5rem 0 .5rem; font-size: 12px; color: var(--textmute); animation: fadeUp .5s .4s ease both; }
+        .footer span { color: var(--accent); font-weight: 700; }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeUp    { from { opacity: 0; transform: translateY(10px);  } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse     { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(.5); } }
+        @keyframes spin      { to { transform: rotate(360deg); } }
+        @keyframes barSlide  { 0% { transform: translateX(-200%); } 100% { transform: translateX(400%); } }
+        @keyframes rowIn     { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 900px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .filter-row { grid-template-columns: 1fr; } .topbar { flex-wrap: wrap; } .topbar-right { display: none; } .wrap { padding: 1rem 1rem 2rem; } }
     </style>
 </head>
 <body>
 
-{{-- ══ LOADING OVERLAY ══ --}}
+<div class="glow-blob glow-1"></div>
+<div class="glow-blob glow-2"></div>
+<div class="glow-blob glow-3"></div>
+
 <div class="loading-overlay" id="loadingOverlay">
-    <div class="loading-card">
-        <div class="spinner"></div>
-        <div class="loading-title">Memproses Data Absensi...</div>
-        <div class="loading-bar-wrap">
-            <div class="loading-bar"></div>
-        </div>
-        <div class="loading-sub">Mohon tunggu, jangan tutup halaman ini</div>
-    </div>
+    <div class="spinner"></div>
+    <div class="loading-text">Memproses data absensi...</div>
+    <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
 </div>
 
-<div class="dash-wrap">
+<div class="wrap">
 
-    {{-- ══ TOPBAR ══ --}}
+    <!-- TOPBAR -->
     <div class="topbar">
-        <div class="topbar-icon">
-            <svg viewBox="0 0 24 24">
-                <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
+        <div class="logo-wrap">
+            <img src="{{ asset('images/kipin.png') }}"
+                    alt="Kipin Logo"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <svg class="logo-fallback" viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" fill="currentColor"/>
             </svg>
         </div>
-        <div style="flex:1">
-            <p class="topbar-title">Dashboard Monitoring Absensi</p>
-            <p class="topbar-sub"><span class="pulse-dot"></span>Kipin &mdash; Data real-time</p>
+
+        <div class="topbar-info">
+            <div class="topbar-title">Dashboard Monitoring Absensi</div>
+            <div class="topbar-sub">
+                <span class="live-dot"></span>
+                Kipin &mdash; Data Real-time
+            </div>
         </div>
-        <div style="text-align:right">
-            <div class="topbar-clock" id="liveClock"></div>
-            <div class="topbar-date"  id="liveDate"></div>
+
+        <div class="topbar-right" style="display:flex; align-items:center; gap:14px;">
+            <div>
+                <div class="clock" id="liveClock"></div>
+                <div class="date-label" id="liveDate"></div>
+            </div>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" style="
+                    display: flex; align-items: center; gap: 7px;
+                    padding: 8px 16px;
+                    background: rgba(255,255,255,0.15);
+                    border: 1.5px solid rgba(255,255,255,0.3);
+                    border-radius: 10px;
+                    color: #fff;
+                    font-size: 13px;
+                    font-weight: 700;
+                    font-family: inherit;
+                    cursor: pointer;
+                    backdrop-filter: blur(6px);
+                    transition: background .2s;
+                "
+                onmouseover="this.style.background='rgba(255,255,255,0.25)'"
+                onmouseout="this.style.background='rgba(255,255,255,0.15)'"
+                >
+                    <svg width="15" height="15" fill="none" stroke="#fff" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    Logout
+                </button>
+            </form>
         </div>
     </div>
 
-    {{-- ══ STAT CARDS ══ --}}
+    <!-- STAT CARDS -->
     <div class="stat-grid">
-        <div class="stat-card">
-            <div class="stat-label"><span class="stat-dot dot-purple"></span>Total Data</div>
+        <div class="stat-card c-total">
+            <div class="stat-icon icon-total">
+                <svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            </div>
+            <div class="stat-label">Total Data</div>
             <div class="stat-val v-total">{{ $data->count() }}</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label"><span class="stat-dot dot-green"></span>Tepat Waktu</div>
+        <div class="stat-card c-tepat">
+            <div class="stat-icon icon-tepat">
+                <svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            </div>
+            <div class="stat-label">Tepat Waktu</div>
             <div class="stat-val v-tepat">
                 {{ $data->filter(function($d){
                     $w = \Carbon\Carbon::parse($d->waktu_absensi);
@@ -375,8 +339,11 @@
                 })->count() }}
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label"><span class="stat-dot dot-amber"></span>Terlambat</div>
+        <div class="stat-card c-lambat">
+            <div class="stat-icon icon-lambat">
+                <svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><circle cx="12" cy="16" r=".5" fill="currentColor"/></svg>
+            </div>
+            <div class="stat-label">Terlambat</div>
             <div class="stat-val v-lambat">
                 {{ $data->filter(function($d){
                     $w = \Carbon\Carbon::parse($d->waktu_absensi);
@@ -385,8 +352,11 @@
                 })->count() }}
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label"><span class="stat-dot dot-red"></span>Pulang Cepat</div>
+        <div class="stat-card c-cepat">
+            <div class="stat-icon icon-cepat">
+                <svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </div>
+            <div class="stat-label">Pulang Cepat</div>
             <div class="stat-val v-cepat">
                 {{ $data->filter(function($d){
                     $w = \Carbon\Carbon::parse($d->waktu_absensi);
@@ -397,74 +367,59 @@
         </div>
     </div>
 
-    {{-- ══ NOTIFIKASI ══ --}}
     @if(session('success'))
-        <div class="alert-custom-success">{{ session('success') }}</div>
+        <div class="alert-ok">✓ {{ session('success') }}</div>
     @endif
     @if(session('error'))
-        <div class="alert-custom-danger">{{ session('error') }}</div>
+        <div class="alert-err">✕ {{ session('error') }}</div>
     @endif
 
-    {{-- ══ FORM UPLOAD ══ --}}
-    <div class="card-custom">
-        <div class="card-header-custom">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-            </svg>
+    <!-- UPLOAD -->
+    <div class="card">
+        <div class="card-head">
+            <div class="card-head-icon">
+                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
             Upload Data Revo
-            <span class="header-badge">CSV</span>
+            <span class="chip">CSV</span>
         </div>
-        <div class="card-body-custom">
-            <form action="{{ route('import.presensi') }}" method="POST"
-                  enctype="multipart/form-data"
-                  onsubmit="showLoading()">
+        <div class="card-body">
+            <form action="{{ route('import.presensi') }}" method="POST" enctype="multipart/form-data"
+                    onsubmit="document.getElementById('loadingOverlay').classList.add('show')">
                 @csrf
-                <div class="d-flex gap-2 align-items-center flex-wrap">
-                    <input type="file" class="upload-input" name="file_csv"
-                           id="csvFileInput" required
-                           onchange="showFileName(this)">
+                <div class="upload-zone">
+                    <input type="file" class="upload-input" name="file_csv" required onchange="showFileName(this)">
                     <button class="btn-upload" type="submit">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2.5">
-                            <polyline points="17 8 12 3 7 8"/>
-                            <line x1="12" y1="3" x2="12" y2="15"/>
-                            <path d="M5 19h14"/>
-                        </svg>
+                        <svg fill="none" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/><path d="M5 19h14"/></svg>
                         Upload &amp; Proses
                     </button>
                 </div>
-                <div id="fileInfo" style="margin-top:8px;font-size:12px;color:#6b7280;display:none"></div>
+                <div class="file-info" id="fileInfo"></div>
             </form>
         </div>
     </div>
 
-    {{-- ══ FILTER & PENCARIAN ══ --}}
-    <div class="card-custom">
-        <div class="card-header-custom">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
-                <circle cx="11" cy="11" r="8"/>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
+    <!-- FILTER -->
+    <div class="card">
+        <div class="card-head">
+            <div class="card-head-icon">
+                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
             Filter &amp; Pencarian
         </div>
-        <div class="card-body-custom">
+        <div class="card-body">
             <div class="filter-row">
-                <div class="filter-group">
-                    <label class="filter-label">Cari Nama Karyawan</label>
-                    <input type="text" class="filter-input" id="searchName"
-                           placeholder="Ketik nama karyawan..."
-                           oninput="filterTable()">
+                <div class="f-group">
+                    <label class="f-label">Cari Nama</label>
+                    <input class="f-input" type="text" id="searchName" placeholder="Nama karyawan..." oninput="filterTable()">
                 </div>
-                <div class="filter-group">
-                    <label class="filter-label">Filter Tanggal</label>
-                    <input type="date" class="filter-input" id="filterDate"
-                           onchange="filterTable()">
+                <div class="f-group">
+                    <label class="f-label">Tanggal</label>
+                    <input class="f-input" type="date" id="filterDate" onchange="filterTable()">
                 </div>
-                <div class="filter-group">
-                    <label class="filter-label">Filter Keterangan</label>
-                    <select class="filter-input" id="filterKet" onchange="filterTable()">
+                <div class="f-group">
+                    <label class="f-label">Keterangan</label>
+                    <select class="f-input" id="filterKet" onchange="filterTable()">
                         <option value="">Semua</option>
                         <option value="tepat">Tepat Waktu</option>
                         <option value="terlambat">Terlambat</option>
@@ -478,95 +433,87 @@
         </div>
     </div>
 
-    {{-- ══ TABEL ══ --}}
-    <div class="card-custom">
-        <div class="card-header-custom">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <path d="M3 9h18M9 21V9"/>
-            </svg>
+    <!-- TABLE -->
+    <div class="card">
+        <div class="card-head">
+            <div class="card-head-icon">
+                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            </div>
             Data Presensi
-            <span class="header-badge" id="countBadge">{{ $data->count() }} data</span>
+            <span class="chip" id="countChip">{{ $data->count() }} data</span>
         </div>
 
-        <div class="result-info">
-            Menampilkan <strong id="shownCount">{{ $data->count() }}</strong>
-            dari <strong>{{ $data->count() }}</strong> data
+        <!-- RESULT BAR -->
+        <div class="result-bar">
+            <span>
+                Menampilkan <strong id="shownFrom">1</strong>–<strong id="shownTo">30</strong>
+                dari <strong id="shownTotal">{{ $data->count() }}</strong> data
+            </span>
+            <div class="per-page-wrap">
+                Per halaman:
+                <select class="per-page-sel" id="perPageSel" onchange="changePerPage()">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30" selected>30</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
         </div>
 
-        <div style="overflow-x:auto">
+        <div class="tbl-wrap">
             <table>
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th>PIN</th>
-                        <th>Nama Karyawan</th>
-                        <th>Tanggal</th>
-                        <th>Waktu</th>
-                        <th>Status</th>
-                        <th>Keterangan</th>
+                        <th>No</th><th>PIN</th><th>Nama Karyawan</th>
+                        <th>Tanggal</th><th>Waktu</th><th>Status</th><th>Keterangan</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
                     @forelse($data as $i => $d)
                     @php
                         $waktu       = \Carbon\Carbon::parse($d->waktu_absensi);
-                        $jamMasuk    = \Carbon\Carbon::createFromTime(8, 30);
-                        $jamPulang   = \Carbon\Carbon::createFromTime(15, 30);
                         $isMasuk     = str_contains(strtolower($d->status_mesin), 'masuk');
-                        $terlambat   = $isMasuk  && $waktu->format('H:i:s') > $jamMasuk->format('H:i:s');
-                        $pulangCepat = !$isMasuk && $waktu->format('H:i:s') < $jamPulang->format('H:i:s');
+                        $terlambat   = $isMasuk  && $waktu->format('H:i:s') > '08:30:00';
+                        $pulangCepat = !$isMasuk && $waktu->format('H:i:s') < '15:30:00';
                         $ketClass    = $terlambat ? 'terlambat' : ($pulangCepat ? 'cepat' : 'tepat');
                     @endphp
-                    <tr class="row-anim tbl-row"
-                        data-delay="{{ $i }}"
+                    <tr class="tbl-row"
+                        data-index="{{ $i + 1 }}"
                         data-nama="{{ strtolower($d->karyawan->nama) }}"
                         data-tanggal="{{ $waktu->format('Y-m-d') }}"
                         data-ket="{{ $ketClass }}">
-
-                        <td style="color:#9ca3af;font-size:12px">{{ $i + 1 }}</td>
-
-                        <td><span class="pin-chip">{{ $d->karyawan->id_mesin }}</span></td>
-
+                        <td style="color:var(--textlight);font-size:12px;font-family:'JetBrains Mono',monospace" class="td-no">{{ str_pad($i+1,2,'0',STR_PAD_LEFT) }}</td>
+                        <td><span class="pin">{{ $d->karyawan->id_mesin }}</span></td>
                         <td>
                             <div class="nama-cell">
-                                <div class="avatar">
-                                    {{ strtoupper(substr($d->karyawan->nama, 0, 2)) }}
-                                </div>
-                                {{ $d->karyawan->nama }}
+                                <div class="avatar">{{ strtoupper(substr($d->karyawan->nama,0,2)) }}</div>
+                                <span style="font-weight:600">{{ $d->karyawan->nama }}</span>
                             </div>
                         </td>
-
-                        <td style="font-size:12px;color:#6b7280">
-                            {{ $waktu->translatedFormat('d M Y') }}
-                        </td>
-
-                        <td style="font-family:monospace;font-size:12px;color:#6b7280">
-                            {{ $waktu->format('H:i:s') }}
-                        </td>
-
+                        <td style="font-size:12px;color:var(--textmute)">{{ $waktu->translatedFormat('d M Y') }}</td>
+                        <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--textmute)">{{ $waktu->format('H:i:s') }}</td>
                         <td>
                             @if($isMasuk)
-                                <span class="badge-custom badge-masuk">Absensi Masuk</span>
+                                <span class="badge b-masuk">Absensi Masuk</span>
                             @else
-                                <span class="badge-custom badge-pulang">Absensi Pulang</span>
+                                <span class="badge b-pulang">Absensi Pulang</span>
                             @endif
                         </td>
-
                         <td>
                             @if($terlambat)
-                                <span class="badge-custom badge-terlambat">Terlambat</span>
+                                <span class="badge b-terlambat">Terlambat</span>
                             @elseif($pulangCepat)
-                                <span class="badge-custom badge-cepat">Pulang Cepat</span>
+                                <span class="badge b-cepat">Pulang Cepat</span>
                             @else
-                                <span class="badge-custom badge-tepat">Tepat Waktu</span>
+                                <span class="badge b-tepat">Tepat Waktu</span>
                             @endif
                         </td>
                     </tr>
                     @empty
-                    <tr>
+                    <tr id="emptyInitialRow">
                         <td colspan="7">
-                            <div class="empty-state">
+                            <div class="empty">
                                 <div class="empty-icon">📋</div>
                                 <div class="empty-text">Belum ada data tersedia</div>
                                 <div class="empty-sub">Upload file CSV untuk memulai</div>
@@ -577,94 +524,160 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- PAGINATION BAR -->
+        <div class="pg-bar">
+            <div class="pg-info" id="pgInfo">Halaman 1 dari 1</div>
+            <div class="pg-btns" id="pgBtns"></div>
+        </div>
     </div>
 
-    {{-- ══ FOOTER ══ --}}
-    <div class="footer-copy">
-        &copy; {{ date('Y') }} Kipin &mdash; Sistem Monitoring Absensi. Sakera.
+    <div class="footer">
+        &copy; {{ date('Y') }} <span>Kipin</span> &mdash; Sistem Monitoring Absensi &middot; Sakera
     </div>
 
 </div>
 
 <script>
-    /* ── Animasi delay tiap baris ── */
-    document.querySelectorAll('tr.row-anim').forEach(function(tr) {
-        tr.style.animationDelay = (tr.getAttribute('data-delay') * 0.04) + 's';
-    });
-
-    /* ── Jam & tanggal live ── */
-    function updateClock() {
-        var now = new Date();
-        document.getElementById('liveClock').textContent =
-            now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-        document.getElementById('liveDate').textContent =
-            now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+    /* ── CLOCK ─────────────────────────────────────────── */
+    function tick() {
+        var d = new Date();
+        document.getElementById('liveClock').textContent = d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+        document.getElementById('liveDate').textContent  = d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
     }
-    updateClock();
-    setInterval(updateClock, 1000);
+    tick(); setInterval(tick, 1000);
 
-    /* ── Loading overlay saat form disubmit ── */
-    function showLoading() {
-        document.getElementById('loadingOverlay').classList.add('show');
-    }
-
-    /* ── Tampilkan nama file setelah dipilih ── */
+    /* ── FILE NAME ─────────────────────────────────────── */
     function showFileName(input) {
-        var info = document.getElementById('fileInfo');
+        var el = document.getElementById('fileInfo');
         if (input.files && input.files[0]) {
             var f = input.files[0];
-            info.style.display = 'block';
-            info.innerHTML = '📄 <strong>' + f.name + '</strong> (' +
-                Math.round(f.size / 1024) + ' KB) — Siap diproses';
-        } else {
-            info.style.display = 'none';
-        }
+            el.style.display = 'block';
+            el.innerHTML = '📄 <strong style="color:var(--accent)">' + f.name + '</strong> <span>(' + Math.round(f.size/1024) + ' KB) — siap diproses</span>';
+        } else { el.style.display = 'none'; }
     }
 
-    /* ── Filter & Pencarian (client-side) ── */
-    var totalRows = document.querySelectorAll('.tbl-row').length;
+    /* ── PAGINATION ENGINE ─────────────────────────────── */
+    var PER_PAGE    = 30;
+    var currentPage = 1;
+    var filteredRows = [];
 
-    function filterTable() {
-        var name  = document.getElementById('searchName').value.toLowerCase().trim();
-        var date  = document.getElementById('filterDate').value;
-        var ket   = document.getElementById('filterKet').value;
-        var rows  = document.querySelectorAll('.tbl-row');
-        var shown = 0;
+    function getFilteredRows() {
+        var name = document.getElementById('searchName').value.toLowerCase().trim();
+        var date = document.getElementById('filterDate').value;
+        var ket  = document.getElementById('filterKet').value;
+        return Array.from(document.querySelectorAll('.tbl-row')).filter(function(tr) {
+            return (!name || tr.dataset.nama.includes(name))
+                && (!date || tr.dataset.tanggal === date)
+                && (!ket  || tr.dataset.ket === ket);
+        });
+    }
 
-        rows.forEach(function(tr) {
-            var matchName = !name || tr.getAttribute('data-nama').includes(name);
-            var matchDate = !date || tr.getAttribute('data-tanggal') === date;
-            var matchKet  = !ket  || tr.getAttribute('data-ket') === ket;
+    function renderPage() {
+        filteredRows = getFilteredRows();
+        var total = filteredRows.length;
+        var tp    = Math.max(1, Math.ceil(total / PER_PAGE));
+        if (currentPage > tp) currentPage = tp;
 
-            if (matchName && matchDate && matchKet) {
-                tr.style.display = '';
-                shown++;
-            } else {
-                tr.style.display = 'none';
+        /* sembunyikan semua baris */
+        Array.from(document.querySelectorAll('.tbl-row')).forEach(function(tr) {
+            tr.style.display = 'none';
+        });
+
+        /* tampilkan slice halaman ini */
+        var start = (currentPage - 1) * PER_PAGE;
+        var end   = Math.min(start + PER_PAGE, total);
+        filteredRows.slice(start, end).forEach(function(tr, idx) {
+            tr.style.display = '';
+            tr.style.animation = 'rowIn .3s ' + (idx * 0.025) + 's ease both';
+            /* update nomor urut sesuai posisi global */
+            var noCell = tr.querySelector('.td-no');
+            if (noCell) {
+                var globalNo = start + idx + 1;
+                noCell.textContent = String(globalNo).padStart(2, '0');
             }
         });
 
-        /* Update counter */
-        document.getElementById('shownCount').textContent = shown;
-        document.getElementById('countBadge').textContent = shown + ' data';
+        /* update result bar */
+        var from = total === 0 ? 0 : start + 1;
+        var to   = end;
+        document.getElementById('shownFrom').textContent  = from;
+        document.getElementById('shownTo').textContent    = to;
+        document.getElementById('shownTotal').textContent = total;
+        document.getElementById('countChip').textContent  = total + ' data';
 
-        /* Pesan kosong jika tidak ada hasil */
+        /* empty state filter */
         var emptyRow = document.getElementById('emptyFilterRow');
-        if (shown === 0 && rows.length > 0) {
+        if (total === 0 && document.querySelectorAll('.tbl-row').length > 0) {
             if (!emptyRow) {
-                var tbody = document.getElementById('tableBody');
                 var tr = document.createElement('tr');
-                tr.id = 'emptyFilterRow';
-                tr.innerHTML = '<td colspan="7"><div class="empty-state">' +
-                    '<div class="empty-icon">🔍</div>' +
-                    '<div class="empty-text">Tidak ada data ditemukan</div>' +
-                    '<div class="empty-sub">Coba ubah kata kunci atau filter</div>' +
-                    '</div></td>';
-                tbody.appendChild(tr);
+                tr.id  = 'emptyFilterRow';
+                tr.innerHTML = '<td colspan="7"><div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Data tidak ditemukan</div><div class="empty-sub">Coba ubah kata kunci atau filter</div></div></td>';
+                document.getElementById('tableBody').appendChild(tr);
             }
-        } else {
-            if (emptyRow) emptyRow.remove();
+        } else if (emptyRow) {
+            emptyRow.remove();
         }
+
+        renderPagination(tp, total);
+    }
+
+    function renderPagination(tp, total) {
+        var wrap = document.getElementById('pgBtns');
+        wrap.innerHTML = '';
+
+        /* info teks */
+        document.getElementById('pgInfo').textContent =
+            total === 0 ? 'Tidak ada data' : 'Halaman ' + currentPage + ' dari ' + tp;
+
+        if (total === 0) return;
+
+        function mkBtn(label, page, disabled, active) {
+            var b = document.createElement('button');
+            b.className = 'pg-btn' + (active ? ' pg-active' : '');
+            b.innerHTML = label;
+            b.disabled  = disabled;
+            b.onclick   = function() { currentPage = page; renderPage(); };
+            wrap.appendChild(b);
+        }
+
+        function mkEllipsis() {
+            var s = document.createElement('span');
+            s.className   = 'pg-ellipsis';
+            s.textContent = '…';
+            wrap.appendChild(s);
+        }
+
+        /* tombol prev */
+        mkBtn('&#8592;', currentPage - 1, currentPage === 1, false);
+
+        /* nomor halaman dengan ellipsis */
+        var pages = [];
+        if (tp <= 7) {
+            for (var i = 1; i <= tp; i++) pages.push(i);
+        } else {
+            pages.push(1);
+            if (currentPage > 3)      pages.push('…');
+            var lo = Math.max(2, currentPage - 1);
+            var hi = Math.min(tp - 1, currentPage + 1);
+            for (var i = lo; i <= hi; i++) pages.push(i);
+            if (currentPage < tp - 2) pages.push('…');
+            pages.push(tp);
+        }
+
+        pages.forEach(function(p) {
+            if (p === '…') { mkEllipsis(); }
+            else            { mkBtn(p, p, false, p === currentPage); }
+        });
+
+        /* tombol next */
+        mkBtn('&#8594;', currentPage + 1, currentPage === tp, false);
+    }
+
+    /* ── FILTER ────────────────────────────────────────── */
+    function filterTable() {
+        currentPage = 1;
+        renderPage();
     }
 
     function resetFilter() {
@@ -673,7 +686,16 @@
         document.getElementById('filterKet').value  = '';
         filterTable();
     }
-</script>
 
+    /* ── PER PAGE ──────────────────────────────────────── */
+    function changePerPage() {
+        PER_PAGE    = parseInt(document.getElementById('perPageSel').value);
+        currentPage = 1;
+        renderPage();
+    }
+
+    /* ── INIT ──────────────────────────────────────────── */
+    renderPage();
+</script>
 </body>
 </html>
