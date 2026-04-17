@@ -10,7 +10,6 @@ class LoginController extends Controller
 {
     public function showLoginForm()
     {
-        // Jika sudah login, langsung ke dashboard
         if (Auth::check()) {
             return redirect()->route('dashboard');
         }
@@ -23,14 +22,21 @@ class LoginController extends Controller
             'email'    => 'required',
             'password' => 'required|min:6',
         ], [
-            'email.required'    => 'Email wajib diisi.',
-            'email.email'       => 'Format email tidak valid.',
+            'email.required'    => 'Username atau Email wajib diisi.',
             'password.required' => 'Password wajib diisi.',
             'password.min'      => 'Password minimal 6 karakter.',
         ]);
 
-        $credentials = $request->only('email', 'password');
-        $remember    = $request->has('remember');
+        $login = $request->input('email');
+        $remember = $request->has('remember');
+
+        // Deteksi apakah input berupa email atau username
+        $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
+
+        $credentials = [
+            $field     => $login,
+            'password' => $request->input('password'),
+        ];
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
@@ -38,7 +44,7 @@ class LoginController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password salah. Silakan coba lagi.',
+            'email' => 'Username/Email atau password salah. Silakan coba lagi.',
         ])->onlyInput('email');
     }
 
