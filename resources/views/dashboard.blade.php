@@ -25,6 +25,10 @@
             --rosebg:    #ffe4e6;
             --green:     #16a34a;
             --greenbg:   #dcfce7;
+            --purple:    #7c3aed;
+            --purplebg:  #ede9fe;
+            --blue:      #0284c7;
+            --bluebg:    #e0f2fe;
             --text:      #1e1b4b;
             --text2:     #4338ca;
             --text3:     #6366f1;
@@ -59,6 +63,66 @@
         .glow-2 { width: 500px; height: 500px; background: rgba(13,148,136,0.07); bottom: 0; right: -100px; }
         .glow-3 { width: 300px; height: 300px; background: rgba(225,29,72,0.05); top: 40%; left: 50%; }
 
+        /* ── SITE SHELL ── */
+        .site-shell {
+            max-width: 1240px; margin: 0 auto;
+            padding: 1.25rem 1.5rem 3rem;
+            position: relative; z-index: 1;
+        }
+
+        /* ── TOPBAR ROW ── */
+        .topbar-row {
+            display: flex; align-items: flex-end; gap: 0;
+            margin-bottom: 0;
+        }
+
+        /* ── NAV TABS — PERBAIKAN UTAMA ── */
+        .nav-tabs-bar {
+            display: flex; gap: 4px; align-items: flex-end;
+            flex-shrink: 0; margin-left: 16px;
+        }
+        .nav-tab {
+            padding: 11px 20px; font-size: 13px; font-weight: 700;
+            border: 2px solid rgba(255,255,255,0.45); border-bottom: none;
+            border-radius: 12px 12px 0 0;
+            cursor: pointer; font-family: inherit;
+            transition: all .2s; letter-spacing: -.01em;
+            /* Background cukup solid agar teks terbaca */
+            background: rgba(79,70,229,0.72);
+            /* Teks putih penuh, tidak transparan */
+            color: #ffffff;
+            backdrop-filter: blur(8px);
+            white-space: nowrap;
+            /* Shadow teks agar kontras lebih kuat */
+            text-shadow: 0 1px 6px rgba(0,0,0,0.35);
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.12);
+        }
+        .nav-tab:hover {
+            background: rgba(99,102,241,0.88);
+            color: #ffffff;
+            border-color: rgba(255,255,255,0.65);
+            box-shadow: 0 -4px 16px rgba(99,102,241,0.3);
+            transform: translateY(-1px);
+        }
+        .nav-tab.active {
+            background: #f0f4ff; color: var(--accent);
+            border-color: rgba(99,102,241,0.2);
+            border-bottom-color: #f0f4ff;
+            position: relative; z-index: 3;
+            box-shadow: 0 -4px 12px rgba(99,102,241,0.12);
+            text-shadow: none;
+        }
+        .nav-tab svg {
+            width: 14px; height: 14px; display: inline-block;
+            vertical-align: -2px; margin-right: 6px;
+            stroke: currentColor; fill: none; stroke-width: 2;
+        }
+
+        /* PAGE WRAP */
+        .pages-container { position: relative; z-index: 1; }
+        .page { display: none; }
+        .page.active { display: block; }
+
         /* LOADING */
         .loading-overlay {
             display: none; position: fixed; inset: 0;
@@ -73,15 +137,22 @@
         .loading-bar { height: 100%; width: 40%; background: linear-gradient(90deg, var(--accent), var(--teal)); border-radius: 99px; animation: barSlide 1.4s ease-in-out infinite; }
 
         /* WRAP */
-        .wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; }
+        .wrap { position: relative; z-index: 1; max-width: 100%; }
+        .inner-wrap {
+            background: #f0f4ff;
+            border: 1.5px solid rgba(99,102,241,0.14);
+            border-top: none;
+            border-radius: 0 16px 16px 16px;
+            padding: 1.4rem;
+        }
 
         /* TOPBAR */
         .topbar {
             display: flex; align-items: center; gap: 18px;
             background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #0d9488 100%);
-            border-radius: 20px; padding: 1.1rem 1.6rem;
-            margin-bottom: 1.5rem; animation: slideDown .5s ease;
-            position: relative; overflow: hidden;
+            border-radius: 20px 0 0 0; padding: 1.1rem 1.6rem;
+            animation: slideDown .5s ease;
+            position: relative; overflow: hidden; flex: 1;
             box-shadow: 0 8px 32px rgba(99,102,241,0.28), 0 2px 8px rgba(99,102,241,0.15);
         }
         .topbar::before {
@@ -89,7 +160,6 @@
             background: radial-gradient(ellipse at 80% 50%, rgba(255,255,255,0.08) 0%, transparent 60%);
             pointer-events: none;
         }
-
         .logo-wrap {
             width: 68px; height: 68px; border-radius: 18px;
             background: rgba(255,255,255,0.18);
@@ -100,12 +170,10 @@
         }
         .logo-wrap img { width: 54px; height: 54px; object-fit: contain; }
         .logo-fallback { width: 36px; height: 36px; fill: #fff; display: none; }
-
         .topbar-info { flex: 1; }
         .topbar-title { font-size: 19px; font-weight: 800; color: #fff; letter-spacing: -.03em; line-height: 1; }
         .topbar-sub { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 5px; display: flex; align-items: center; gap: 7px; }
         .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #a3e635; box-shadow: 0 0 6px #a3e635; animation: pulse 2s infinite; }
-
         .topbar-right { text-align: right; flex-shrink: 0; }
         .clock { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 600; color: #fff; letter-spacing: -.02em; line-height: 1; }
         .date-label { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 4px; }
@@ -130,23 +198,54 @@
         .stat-card:nth-child(2) { animation-delay: .10s; }
         .stat-card:nth-child(3) { animation-delay: .15s; }
         .stat-card:nth-child(4) { animation-delay: .20s; }
-
         .stat-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
         .stat-icon svg { width: 20px; height: 20px; }
         .icon-total  { background: var(--accentbg); } .icon-total svg  { stroke: var(--accent); }
         .icon-tepat  { background: var(--greenbg);  } .icon-tepat svg  { stroke: var(--green);  }
         .icon-lambat { background: var(--amberbg);  } .icon-lambat svg { stroke: var(--amber);  }
         .icon-cepat  { background: var(--rosebg);   } .icon-cepat svg  { stroke: var(--rose);   }
-
         .stat-label { font-size: 11px; font-weight: 700; color: var(--textmute); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; }
         .stat-val { font-size: 34px; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
         .v-total { color: var(--accent); } .v-tepat { color: var(--green); }
         .v-lambat { color: var(--amber); } .v-cepat  { color: var(--rose);  }
 
+        /* TOP OFFENDER CARDS */
+        .offender-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 1.5rem; }
+        .offender-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1.2rem 1.4rem;
+            position: relative; overflow: hidden;
+            box-shadow: 0 2px 12px rgba(99,102,241,0.06);
+            animation: fadeUp .5s ease both;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .offender-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(99,102,241,0.12); }
+        .offender-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+        .oc-lambat::before { background: linear-gradient(90deg, #d97706, #fbbf24); }
+        .oc-cepat::before  { background: linear-gradient(90deg, #e11d48, #fb7185); }
+        .offender-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .offender-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .offender-icon svg { width: 18px; height: 18px; }
+        .oi-lambat { background: var(--amberbg); } .oi-lambat svg { stroke: var(--amber); }
+        .oi-cepat  { background: var(--rosebg);  } .oi-cepat svg  { stroke: var(--rose);  }
+        .offender-title { font-size: 12px; font-weight: 700; color: var(--textmute); text-transform: uppercase; letter-spacing: .06em; }
+        .offender-body { display: flex; align-items: center; gap: 14px; }
+        .offender-avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #fff; flex-shrink: 0; letter-spacing: -.02em; box-shadow: 0 3px 10px rgba(0,0,0,0.15); }
+        .oa-lambat { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .oa-cepat  { background: linear-gradient(135deg, #e11d48, #fb7185); }
+        .offender-name { font-size: 15px; font-weight: 800; color: var(--text); line-height: 1.2; }
+        .offender-dept { font-size: 11px; color: var(--textmute); margin-top: 2px; }
+        .offender-count { margin-left: auto; text-align: right; }
+        .offender-count-num { font-size: 28px; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+        .oc-num-lambat { color: var(--amber); }
+        .oc-num-cepat  { color: var(--rose); }
+        .offender-count-lbl { font-size: 10px; color: var(--textmute); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+        .offender-empty { text-align: center; color: var(--textlight); font-size: 13px; padding: 10px 0; }
+
         /* CARD */
         .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1.25rem; overflow: hidden; animation: fadeUp .5s ease both; box-shadow: 0 2px 12px rgba(99,102,241,0.06); }
-        .card-head { display: flex; align-items: center; gap: 10px; padding: .9rem 1.4rem; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700; color: var(--text); background: linear-gradient(90deg, #fafbff 0%, #fff 100%); }
-        .card-head-icon { width: 30px; height: 30px; border-radius: 9px; background: var(--accentbg); display: flex; align-items: center; justify-content: center; }
+        .card-head { display: flex; align-items: center; gap: 10px; padding: .9rem 1.4rem; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700; color: var(--text); background: linear-gradient(90deg, #fafbff 0%, #fff 100%); flex-wrap: wrap; }
+        .card-head-icon { width: 30px; height: 30px; border-radius: 9px; background: var(--accentbg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .card-head-icon svg { width: 15px; height: 15px; stroke: var(--accent); }
         .chip { font-size: 10px; padding: 3px 10px; border-radius: 20px; background: var(--accentbg); color: var(--accent); border: 1px solid rgba(99,102,241,0.2); font-weight: 700; letter-spacing: .04em; margin-left: auto; }
         .card-body { padding: 1.1rem 1.4rem; }
@@ -165,6 +264,13 @@
         .btn-upload:hover { opacity: .88; } .btn-upload:active { transform: scale(.97); }
         .btn-upload svg { width: 14px; height: 14px; stroke: #fff; }
 
+        /* FILTER MONTH YEAR */
+        .month-year-filter { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 1.25rem; padding: 12px 16px; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 2px 10px rgba(99,102,241,0.05); }
+        .my-filter-label { font-size: 12px; font-weight: 700; color: var(--textmute); text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; margin-right: 4px; }
+        .my-select { padding: 8px 14px; font-size: 13px; font-weight: 600; border: 1.5px solid rgba(99,102,241,0.2); border-radius: 9px; background: var(--accentbg); color: var(--text); font-family: inherit; outline: none; cursor: pointer; transition: border-color .2s, box-shadow .2s; }
+        .my-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        .my-badge { font-size: 11px; font-weight: 700; padding: 5px 14px; background: linear-gradient(135deg, var(--accent), var(--teal)); color: #fff; border-radius: 20px; margin-left: 4px; white-space: nowrap; }
+
         /* FILTER */
         .filter-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; align-items: end; }
         .f-group { display: flex; flex-direction: column; gap: 5px; }
@@ -178,8 +284,6 @@
         /* RESULT BAR */
         .result-bar { padding: 8px 1.4rem; font-size: 12px; color: var(--textmute); background: #fafbff; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
         .result-bar strong { color: var(--accent); font-weight: 700; }
-
-        /* PER PAGE SELECT */
         .per-page-wrap { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--textmute); }
         .per-page-sel { font-size: 12px; border: 1.5px solid rgba(99,102,241,0.15); border-radius: 7px; padding: 3px 8px; background: #fff; color: var(--text); font-family: inherit; cursor: pointer; outline: none; transition: border-color .2s; }
         .per-page-sel:focus { border-color: var(--accent); }
@@ -195,9 +299,7 @@
 
         .avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--teal)); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; margin-right: 10px; flex-shrink: 0; letter-spacing: -.02em; box-shadow: 0 2px 8px rgba(99,102,241,0.25); }
         .nama-cell { display: flex; align-items: center; }
-
         .pin { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; background: var(--accentbg); color: var(--accent); padding: 3px 9px; border-radius: 6px; border: 1px solid rgba(99,102,241,0.18); }
-
         .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap; }
         .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
         .b-masuk     { background: var(--greenbg); color: #15803d; border: 1px solid #bbf7d0; } .b-masuk::before     { background: #16a34a; }
@@ -205,30 +307,17 @@
         .b-terlambat { background: var(--amberbg); color: #92400e; border: 1px solid #fde68a; } .b-terlambat::before { background: #d97706; }
         .b-cepat     { background: var(--rosebg);  color: #be123c; border: 1px solid #fecdd3; } .b-cepat::before     { background: #e11d48; }
         .b-tepat     { background: var(--accentbg); color: var(--accent2); border: 1px solid rgba(99,102,241,0.2); } .b-tepat::before { background: var(--accent); }
+        .b-hadir     { background: var(--greenbg); color: #15803d; border: 1px solid #bbf7d0; } .b-hadir::before { background: #16a34a; }
+        .b-absen     { background: #f1f5f9; color: var(--textmute); border: 1px solid #e2e8f0; } .b-absen::before { background: #94a3b8; }
 
         /* DONUT CHART */
-        .donut-wrap {
-            display: flex; flex-wrap: wrap; gap: 28px;
-            align-items: center; justify-content: center;
-            padding: 1.4rem;
-        }
-        .donut-canvas-wrap {
-            position: relative; width: 210px; height: 210px; flex-shrink: 0;
-        }
-        .donut-center {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center; pointer-events: none;
-        }
+        .donut-wrap { display: flex; flex-wrap: wrap; gap: 28px; align-items: center; justify-content: center; padding: 1.4rem; }
+        .donut-canvas-wrap { position: relative; width: 210px; height: 210px; flex-shrink: 0; }
+        .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
         .donut-center-num { font-size: 30px; font-weight: 800; color: var(--text); letter-spacing: -.04em; line-height: 1; }
         .donut-center-lbl { font-size: 11px; color: var(--textmute); margin-top: 3px; font-weight: 600; }
         .donut-legends { display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 200px; }
-        .donut-legend-item {
-            display: flex; align-items: center; gap: 12px;
-            padding: 10px 14px; border-radius: 12px;
-            border: 1px solid rgba(99,102,241,0.08);
-            cursor: pointer; transition: background .15s, transform .15s;
-        }
+        .donut-legend-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(99,102,241,0.08); cursor: pointer; transition: background .15s, transform .15s; }
         .donut-legend-item:hover { transform: translateX(3px); }
         .donut-legend-dot { width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0; }
         .donut-legend-label { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
@@ -236,36 +325,16 @@
         .donut-legend-pct { font-size: 11px; color: var(--textmute); font-weight: 500; margin-left: 3px; }
 
         /* PRINT BUTTON */
-        .btn-print {
-            display: flex; align-items: center; gap: 8px;
-            padding: 8px 20px; font-size: 12px; font-weight: 700;
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
-            color: #fff; border: none; border-radius: 10px;
-            cursor: pointer; font-family: inherit;
-            box-shadow: 0 4px 14px rgba(99,102,241,0.30);
-            transition: opacity .2s, transform .1s;
-            white-space: nowrap; margin-left: 8px;
-        }
+        .btn-print { display: flex; align-items: center; gap: 8px; padding: 8px 20px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; border: none; border-radius: 10px; cursor: pointer; font-family: inherit; box-shadow: 0 4px 14px rgba(99,102,241,0.30); transition: opacity .2s, transform .1s; white-space: nowrap; margin-left: 8px; }
         .btn-print:hover { opacity: .88; }
         .btn-print:active { transform: scale(.97); }
-        .btn-print svg { width: 14px; height: 14px; stroke: #fff; }
+        .btn-print svg { width: 14px; height: 14px; stroke: #fff; fill: none; }
 
         /* PAGINATION */
-        .pg-bar {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 12px 1.4rem; flex-wrap: wrap; gap: 10px;
-            border-top: 1px solid rgba(99,102,241,0.08); background: #fafbff;
-        }
+        .pg-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 1.4rem; flex-wrap: wrap; gap: 10px; border-top: 1px solid rgba(99,102,241,0.08); background: #fafbff; }
         .pg-info { font-size: 12px; color: var(--textmute); font-weight: 500; }
         .pg-btns { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
-        .pg-btn {
-            min-width: 32px; height: 32px; padding: 0 8px;
-            border: 1.5px solid rgba(99,102,241,0.15);
-            background: #fff; color: var(--text);
-            border-radius: 8px; font-size: 12px; font-weight: 600;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-family: inherit; transition: all .15s; line-height: 1;
-        }
+        .pg-btn { min-width: 32px; height: 32px; padding: 0 8px; border: 1.5px solid rgba(99,102,241,0.15); background: #fff; color: var(--text); border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: inherit; transition: all .15s; line-height: 1; }
         .pg-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--accentbg); }
         .pg-btn:disabled { opacity: .35; cursor: not-allowed; }
         .pg-btn.pg-active { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700; box-shadow: 0 2px 8px rgba(99,102,241,0.3); }
@@ -276,60 +345,82 @@
         .empty-text { font-size: 14px; font-weight: 700; color: var(--textmute); }
         .empty-sub  { font-size: 12px; margin-top: 6px; }
 
+        /* REKAP PAGE */
+        .rekap-header { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 1.2rem 1.4rem; border-bottom: 1px solid var(--border); background: linear-gradient(90deg, #fafbff 0%, #fff 100%); }
+        .rekap-period-label { font-size: 13px; font-weight: 700; color: var(--text); }
+        .period-select-wrap { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-left: auto; }
+        .btn-apply { padding: 8px 20px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--teal)); color: #fff; border: none; border-radius: 9px; cursor: pointer; font-family: inherit; transition: opacity .2s; }
+        .btn-apply:hover { opacity: .85; }
+
+        /* REKAP TABLE */
+        .rekap-tbl th { background: #f0f4ff; }
+        .num-cell { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; text-align: center; }
+        .num-cell.zero { color: var(--textlight); }
+        .num-cell.warn { color: var(--amber); }
+        .num-cell.danger { color: var(--rose); }
+        .num-cell.ok { color: var(--green); }
+
+        /* PROGRESS BAR */
+        .prog-wrap { width: 100%; height: 6px; background: #f1f5f9; border-radius: 99px; overflow: hidden; margin-top: 4px; }
+        .prog-bar { height: 100%; border-radius: 99px; transition: width .6s ease; }
+
+        /* PERIOD SUMMARY CHIPS */
+        .period-chips { display: flex; gap: 8px; flex-wrap: wrap; padding: 10px 1.4rem; border-bottom: 1px solid var(--border); background: #fafbff; }
+        .period-chip { padding: 4px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1.5px solid transparent; cursor: pointer; transition: all .15s; }
+        .period-chip:hover { transform: translateY(-1px); }
+        .pchip-total  { background: var(--accentbg); color: var(--accent); border-color: rgba(99,102,241,0.2); }
+        .pchip-hadir  { background: var(--greenbg); color: #15803d; border-color: #bbf7d0; }
+        .pchip-lambat { background: var(--amberbg); color: #92400e; border-color: #fde68a; }
+        .pchip-cepat  { background: var(--rosebg); color: #be123c; border-color: #fecdd3; }
+
         .footer { text-align: center; padding: 1.5rem 0 .5rem; font-size: 12px; color: var(--textmute); animation: fadeUp .5s .4s ease both; }
         .footer span { color: var(--accent); font-weight: 700; }
 
-        /* ── PRINT STYLES ────────────────────────────────── */
+        /* ── PRINT ── */
         @media print {
-            .glow-blob, .loading-overlay { display: none !important; }
-            body { background: #fff !important; }
+            .glow-blob, .loading-overlay,
+            .nav-tabs-bar,
+            .btn-print, .btn-upload, .btn-reset, .btn-apply,
+            .month-year-filter form,
+            .filter-row, .pg-bar, .result-bar,
+            .footer, .offender-grid,
+            .upload-zone, .file-info { display: none !important; }
+            html, body { background: #fff !important; margin: 0; padding: 0; }
             body::before { display: none !important; }
-            .wrap { max-width: 100%; padding: 0 12px; }
-
-            /* Sembunyikan elemen non-esensial */
-            .topbar form,
-            .card:has(.upload-input),
-            .filter-row,
-            .pg-bar,
-            .result-bar,
-            .footer,
-            .btn-print,
-            .btn-upload,
-            .btn-reset { display: none !important; }
-
-            /* Card tampil rapi */
-            .card { box-shadow: none !important; border: 1px solid #ddd !important; page-break-inside: avoid; }
-
-            /* Topbar tetap tampil tapi sederhana */
+            .site-shell { padding: 0 !important; max-width: 100% !important; }
+            .topbar-row  { display: block !important; }
+            .wrap        { padding: 0 !important; }
+            .inner-wrap  { border: none !important; padding: 0 !important; background: #fff !important; }
             .topbar {
-                background: #6366f1 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
+                background: linear-gradient(135deg, #6366f1 0%, #4f46e5 60%, #0d9488 100%) !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
                 box-shadow: none !important;
-                border-radius: 12px !important;
-                margin-bottom: 12px !important;
+                border-radius: 10px !important;
+                margin: 0 0 12px 0 !important;
+                padding: 12px 16px !important;
+                flex: none !important; width: 100% !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
-
-            /* Stat grid tetap tampil */
-            .stat-card { box-shadow: none !important; }
+            .stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 10px; }
+            .stat-card  { box-shadow: none !important; border: 1px solid #ddd !important; page-break-inside: avoid; break-inside: avoid; }
             .stat-card::before { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-            /* Badge warna tetap tampil */
-            .badge, .pin, .avatar {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            /* Donut chart area */
-            .donut-canvas-wrap canvas { max-width: 180px; max-height: 180px; }
-
-            /* Semua baris tabel tampil saat print */
+            .card { box-shadow: none !important; border: 1px solid #ddd !important; margin-bottom: 8px; page-break-inside: avoid; break-inside: avoid; }
+            .donut-wrap { padding: 8px !important; }
             .tbl-row { display: table-row !important; }
-
-            @page {
-                margin: 1.5cm;
-                size: A4;
+            td, th { padding: 7px 10px !important; font-size: 11px !important; }
+            .avatar { width: 26px !important; height: 26px !important; font-size: 9px !important; }
+            .badge, .pin, .avatar,
+            .stat-val, .donut-legend-dot { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .month-year-filter { border: none !important; padding: 0 !important; background: transparent !important; box-shadow: none !important; }
+            .my-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            @page { margin: 1cm 1.2cm; size: A4 portrait; }
+            .stat-grid, .offender-grid, .card, table, thead, tr {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
+            .card + .card { page-break-before: auto; }
         }
 
         @keyframes slideDown { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
@@ -339,12 +430,21 @@
         @keyframes barSlide  { 0% { transform: translateX(-200%); } 100% { transform: translateX(400%); } }
         @keyframes rowIn     { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        @media (max-width: 900px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 900px) {
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+            .offender-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 700px) {
+            .topbar-row { flex-direction: column; align-items: stretch; }
+            .topbar { border-radius: 14px 14px 0 0 !important; }
+            .nav-tabs-bar { margin-left: 0; }
+            .nav-tab { padding: 9px 14px; font-size: 12px; }
+        }
         @media (max-width: 600px) {
             .filter-row { grid-template-columns: 1fr; }
             .topbar { flex-wrap: wrap; }
             .topbar-right { display: none; }
-            .wrap { padding: 1rem 1rem 2rem; }
+            .site-shell { padding: 1rem 0.75rem 2rem; }
             .donut-wrap { flex-direction: column; }
         }
     </style>
@@ -361,19 +461,42 @@
     <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
 </div>
 
-<div class="wrap">
+@php
+    use Carbon\Carbon;
+    $selMonth = request('bulan', now()->month);
+    $selYear  = request('tahun', now()->year);
+    $dataFiltered = $data->filter(function($d) use ($selMonth, $selYear) {
+        $w = Carbon::parse($d->waktu_absensi);
+        return $w->month == $selMonth && $w->year == $selYear;
+    });
+    $cTepat  = $dataFiltered->filter(function($d){ $w = Carbon::parse($d->waktu_absensi); return str_contains(strtolower($d->status_mesin), 'masuk') && $w->format('H:i:s') <= '08:30:00'; })->count();
+    $cLambat = $dataFiltered->filter(function($d){ $w = Carbon::parse($d->waktu_absensi); return str_contains(strtolower($d->status_mesin), 'masuk') && $w->format('H:i:s') > '08:30:00'; })->count();
+    $cCepat  = $dataFiltered->filter(function($d){ $w = Carbon::parse($d->waktu_absensi); return !str_contains(strtolower($d->status_mesin), 'masuk') && $w->format('H:i:s') < '15:30:00'; })->count();
+    $cPulang = $dataFiltered->filter(function($d){ return !str_contains(strtolower($d->status_mesin), 'masuk'); })->count();
+    $totalData = $dataFiltered->count();
+    $grouped = $dataFiltered->groupBy('karyawan_id');
+    $lambatCounts = $dataFiltered->filter(function($d){ $w = Carbon::parse($d->waktu_absensi); return str_contains(strtolower($d->status_mesin), 'masuk') && $w->format('H:i:s') > '08:30:00'; })->groupBy('karyawan_id')->map->count();
+    $topLambatId   = $lambatCounts->isEmpty() ? null : $lambatCounts->sortDesc()->keys()->first();
+    $topLambatData = $topLambatId ? $dataFiltered->firstWhere('karyawan_id', $topLambatId) : null;
+    $topLambatNum  = $topLambatId ? $lambatCounts[$topLambatId] : 0;
+    $cepatCounts = $dataFiltered->filter(function($d){ $w = Carbon::parse($d->waktu_absensi); return !str_contains(strtolower($d->status_mesin), 'masuk') && $w->format('H:i:s') < '15:30:00'; })->groupBy('karyawan_id')->map->count();
+    $topCepatId   = $cepatCounts->isEmpty() ? null : $cepatCounts->sortDesc()->keys()->first();
+    $topCepatData = $topCepatId ? $dataFiltered->firstWhere('karyawan_id', $topCepatId) : null;
+    $topCepatNum  = $topCepatId ? $cepatCounts[$topCepatId] : 0;
+    $namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+@endphp
 
-    <!-- TOPBAR -->
+<div class="site-shell">
+
+<div class="topbar-row">
     <div class="topbar">
         <div class="logo-wrap">
-            <img src="{{ asset('images/kipin.png') }}"
-                 alt="Kipin Logo"
+            <img src="{{ asset('images/kipin.png') }}" alt="Kipin Logo"
                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
             <svg class="logo-fallback" viewBox="0 0 24 24" fill="none" stroke-width="2">
                 <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" fill="currentColor"/>
             </svg>
         </div>
-
         <div class="topbar-info">
             <div class="topbar-title">Dashboard Monitoring Absensi</div>
             <div class="topbar-sub">
@@ -381,7 +504,6 @@
                 Kipin &mdash; Data Real-time
             </div>
         </div>
-
         <div class="topbar-right" style="display:flex; align-items:center; gap:14px;">
             <div>
                 <div class="clock" id="liveClock"></div>
@@ -389,23 +511,9 @@
             </div>
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit" style="
-                    display: flex; align-items: center; gap: 7px;
-                    padding: 8px 16px;
-                    background: rgba(255,255,255,0.15);
-                    border: 1.5px solid rgba(255,255,255,0.3);
-                    border-radius: 10px;
-                    color: #fff;
-                    font-size: 13px;
-                    font-weight: 700;
-                    font-family: inherit;
-                    cursor: pointer;
-                    backdrop-filter: blur(6px);
-                    transition: background .2s;
-                "
-                onmouseover="this.style.background='rgba(255,255,255,0.25)'"
-                onmouseout="this.style.background='rgba(255,255,255,0.15)'"
-                >
+                <button type="submit" style="display:flex;align-items:center;gap:7px;padding:8px 16px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);border-radius:10px;color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;backdrop-filter:blur(6px);transition:background .2s"
+                    onmouseover="this.style.background='rgba(255,255,255,0.25)'"
+                    onmouseout="this.style.background='rgba(255,255,255,0.15)'">
                     <svg width="15" height="15" fill="none" stroke="#fff" stroke-width="2.2" viewBox="0 0 24 24">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                         <polyline points="16 17 21 12 16 7"/>
@@ -417,35 +525,56 @@
         </div>
     </div>
 
-    <!-- STAT CARDS -->
-    <div class="stat-grid">
-        @php
-            $cTepat  = $data->filter(function($d){
-                $w = \Carbon\Carbon::parse($d->waktu_absensi);
-                $isMasuk = str_contains(strtolower($d->status_mesin), 'masuk');
-                return $isMasuk && $w->format('H:i:s') <= '08:30:00';
-            })->count();
-            $cLambat = $data->filter(function($d){
-                $w = \Carbon\Carbon::parse($d->waktu_absensi);
-                $isMasuk = str_contains(strtolower($d->status_mesin), 'masuk');
-                return $isMasuk && $w->format('H:i:s') > '08:30:00';
-            })->count();
-            $cCepat  = $data->filter(function($d){
-                $w = \Carbon\Carbon::parse($d->waktu_absensi);
-                $isMasuk = str_contains(strtolower($d->status_mesin), 'masuk');
-                return !$isMasuk && $w->format('H:i:s') < '15:30:00';
-            })->count();
-            $cPulang = $data->filter(function($d){
-                return !str_contains(strtolower($d->status_mesin), 'masuk');
-            })->count();
-            $totalData = $data->count();
-        @endphp
+    <!-- NAV TABS — tulisan selalu terlihat -->
+    <div class="nav-tabs-bar">
+        <button class="nav-tab active" id="tab-main" onclick="switchTab('main')">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            Dashboard Utama
+        </button>
+        <button class="nav-tab" id="tab-bulanan" onclick="switchTab('bulanan')">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            Rekap Bulanan
+        </button>
+        <button class="nav-tab" id="tab-mingguan" onclick="switchTab('mingguan')">
+            <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+            Rekap Mingguan
+        </button>
+    </div>
+</div>
 
+<div class="wrap">
+<div class="pages-container">
+
+<!-- PAGE: DASHBOARD UTAMA -->
+<div class="page active" id="page-main">
+<div class="inner-wrap">
+
+    <div class="month-year-filter">
+        <span class="my-filter-label">&#128197; Periode:</span>
+        <form method="GET" action="{{ route('dashboard') }}" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <select class="my-select" name="bulan">
+                @foreach($namaBulan as $num => $nm)
+                    @if($num > 0)
+                    <option value="{{ $num }}" {{ $num == $selMonth ? 'selected' : '' }}>{{ $nm }}</option>
+                    @endif
+                @endforeach
+            </select>
+            <select class="my-select" name="tahun">
+                @for($y = now()->year; $y >= now()->year - 5; $y--)
+                <option value="{{ $y }}" {{ $y == $selYear ? 'selected' : '' }}>{{ $y }}</option>
+                @endfor
+            </select>
+            <button type="submit" class="btn-apply">Tampilkan</button>
+        </form>
+        <span class="my-badge">{{ $namaBulan[$selMonth] }} {{ $selYear }}</span>
+    </div>
+
+    <div class="stat-grid">
         <div class="stat-card c-total">
             <div class="stat-icon icon-total">
                 <svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
             </div>
-            <div class="stat-label">Total Data</div>
+            <div class="stat-label">Total Record</div>
             <div class="stat-val v-total">{{ $totalData }}</div>
         </div>
         <div class="stat-card c-tepat">
@@ -471,6 +600,62 @@
         </div>
     </div>
 
+    <div class="offender-grid">
+        <div class="offender-card oc-lambat">
+            <div class="offender-head">
+                <div class="offender-icon oi-lambat">
+                    <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>
+                </div>
+                <div>
+                    <div class="offender-title">&#127942; Terbanyak Terlambat</div>
+                    <div style="font-size:11px;color:var(--textmute);margin-top:2px">{{ $namaBulan[$selMonth] }} {{ $selYear }}</div>
+                </div>
+            </div>
+            @if($topLambatData)
+            <div class="offender-body">
+                <div class="offender-avatar oa-lambat">{{ strtoupper(substr($topLambatData->karyawan->nama, 0, 2)) }}</div>
+                <div>
+                    <div class="offender-name">{{ $topLambatData->karyawan->nama }}</div>
+                    <div class="offender-dept">PIN: {{ $topLambatData->karyawan->id_mesin }}</div>
+                </div>
+                <div class="offender-count">
+                    <div class="offender-count-num oc-num-lambat">{{ $topLambatNum }}</div>
+                    <div class="offender-count-lbl">kali terlambat</div>
+                </div>
+            </div>
+            @else
+            <div class="offender-empty">&#127775; Tidak ada keterlambatan bulan ini</div>
+            @endif
+        </div>
+
+        <div class="offender-card oc-cepat">
+            <div class="offender-head">
+                <div class="offender-icon oi-cepat">
+                    <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </div>
+                <div>
+                    <div class="offender-title">&#127942; Terbanyak Pulang Cepat</div>
+                    <div style="font-size:11px;color:var(--textmute);margin-top:2px">{{ $namaBulan[$selMonth] }} {{ $selYear }}</div>
+                </div>
+            </div>
+            @if($topCepatData)
+            <div class="offender-body">
+                <div class="offender-avatar oa-cepat">{{ strtoupper(substr($topCepatData->karyawan->nama, 0, 2)) }}</div>
+                <div>
+                    <div class="offender-name">{{ $topCepatData->karyawan->nama }}</div>
+                    <div class="offender-dept">PIN: {{ $topCepatData->karyawan->id_mesin }}</div>
+                </div>
+                <div class="offender-count">
+                    <div class="offender-count-num oc-num-cepat">{{ $topCepatNum }}</div>
+                    <div class="offender-count-lbl">kali pulang cepat</div>
+                </div>
+            </div>
+            @else
+            <div class="offender-empty">&#127775; Tidak ada pulang cepat bulan ini</div>
+            @endif
+        </div>
+    </div>
+
     @if(session('success'))
         <div class="alert-ok">&#10003; {{ session('success') }}</div>
     @endif
@@ -478,7 +663,6 @@
         <div class="alert-err">&#10005; {{ session('error') }}</div>
     @endif
 
-    <!-- UPLOAD -->
     <div class="card">
         <div class="card-head">
             <div class="card-head-icon">
@@ -503,64 +687,44 @@
         </div>
     </div>
 
-    <!-- GRAFIK DONUT -->
     <div class="card" style="animation-delay:.25s">
         <div class="card-head">
             <div class="card-head-icon">
-                <svg fill="none" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="9"/>
-                    <path d="M12 3a9 9 0 0 1 9 9h-9z"/>
-                </svg>
+                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 9 9h-9z"/></svg>
             </div>
-            Grafik Ringkasan Absensi
+            Grafik Ringkasan — {{ $namaBulan[$selMonth] }} {{ $selYear }}
             <span class="chip">Donut</span>
-
-            <!-- TOMBOL PRINT PDF -->
             <button class="btn-print" onclick="printDashboard()">
-                <svg fill="none" stroke-width="2.2" viewBox="0 0 24 24">
-                    <polyline points="6 9 6 2 18 2 18 9"/>
-                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                    <rect x="6" y="14" width="12" height="8"/>
-                </svg>
+                <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
                 Print / Simpan PDF
             </button>
         </div>
-
         <div class="donut-wrap">
-            <!-- Canvas -->
             <div class="donut-canvas-wrap">
-                <canvas id="donutChart"
-                        role="img"
-                        aria-label="Grafik donut ringkasan absensi: Tepat Waktu {{ $cTepat }}, Terlambat {{ $cLambat }}, Pulang Cepat {{ $cCepat }}, Absensi Pulang {{ $cPulang }}">
-                    Tepat Waktu: {{ $cTepat }}, Terlambat: {{ $cLambat }}, Pulang Cepat: {{ $cCepat }}, Absensi Pulang: {{ $cPulang }}
-                </canvas>
+                <canvas id="donutChart"></canvas>
                 <div class="donut-center">
                     <div class="donut-center-num" id="donutCenterNum">{{ $totalData }}</div>
                     <div class="donut-center-lbl" id="donutCenterLbl">total</div>
                 </div>
             </div>
-
-            <!-- Legend -->
             <div class="donut-legends">
                 @php
-                    $legendItems = [
-                        ['label' => 'Tepat Waktu',    'val' => $cTepat,  'color' => '#16a34a', 'bg' => '#dcfce7', 'valColor' => '#15803d'],
-                        ['label' => 'Terlambat',       'val' => $cLambat, 'color' => '#d97706', 'bg' => '#fef3c7', 'valColor' => '#92400e'],
-                        ['label' => 'Pulang Cepat',    'val' => $cCepat,  'color' => '#e11d48', 'bg' => '#ffe4e6', 'valColor' => '#be123c'],
-                        ['label' => 'Absensi Pulang',  'val' => $cPulang, 'color' => '#6366f1', 'bg' => '#eef2ff', 'valColor' => '#4338ca'],
-                    ];
+                $legendItems = [
+                    ['label'=>'Tepat Waktu',   'val'=>$cTepat,  'color'=>'#16a34a','bg'=>'#dcfce7','valColor'=>'#15803d'],
+                    ['label'=>'Terlambat',      'val'=>$cLambat, 'color'=>'#d97706','bg'=>'#fef3c7','valColor'=>'#92400e'],
+                    ['label'=>'Pulang Cepat',   'val'=>$cCepat,  'color'=>'#e11d48','bg'=>'#ffe4e6','valColor'=>'#be123c'],
+                    ['label'=>'Absensi Pulang', 'val'=>$cPulang, 'color'=>'#6366f1','bg'=>'#eef2ff','valColor'=>'#4338ca'],
+                ];
                 @endphp
                 @foreach($legendItems as $idx => $item)
-                <div class="donut-legend-item"
-                        style="background: {{ $item['bg'] }}; border-color: {{ $item['color'] }}22;"
-                        onmouseover="highlightDonut({{ $idx }})"
-                        onmouseout="resetDonut()">
-                        <span class="donut-legend-dot" style="background: {{ $item['color'] }};"></span>
-                        <span class="donut-legend-label">{{ $item['label'] }}</span>
-                        <span class="donut-legend-val" style="color: {{ $item['valColor'] }};">
+                <div class="donut-legend-item" style="background:{{ $item['bg'] }};border-color:{{ $item['color'] }}22"
+                     onmouseover="highlightDonut({{ $idx }})" onmouseout="resetDonut()">
+                    <span class="donut-legend-dot" style="background:{{ $item['color'] }}"></span>
+                    <span class="donut-legend-label">{{ $item['label'] }}</span>
+                    <span class="donut-legend-val" style="color:{{ $item['valColor'] }}">
                         {{ $item['val'] }}
                         @if($totalData > 0)
-                            <span class="donut-legend-pct">({{ round($item['val'] / $totalData * 100) }}%)</span>
+                        <span class="donut-legend-pct">({{ round($item['val'] / $totalData * 100) }}%)</span>
                         @endif
                     </span>
                 </div>
@@ -569,7 +733,6 @@
         </div>
     </div>
 
-    <!-- FILTER -->
     <div class="card">
         <div class="card-head">
             <div class="card-head-icon">
@@ -584,8 +747,12 @@
                     <input class="f-input" type="text" id="searchName" placeholder="Nama karyawan..." oninput="filterTable()">
                 </div>
                 <div class="f-group">
-                    <label class="f-label">Tanggal</label>
-                    <input class="f-input" type="date" id="filterDate" onchange="filterTable()">
+                    <label class="f-label">Status</label>
+                    <select class="f-input" id="filterStatus" onchange="filterTable()">
+                        <option value="">Semua</option>
+                        <option value="masuk">Absensi Masuk</option>
+                        <option value="pulang">Absensi Pulang</option>
+                    </select>
                 </div>
                 <div class="f-group">
                     <label class="f-label">Keterangan</label>
@@ -603,22 +770,17 @@
         </div>
     </div>
 
-    <!-- TABLE -->
     <div class="card">
         <div class="card-head">
             <div class="card-head-icon">
                 <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
             </div>
-            Data Presensi
-            <span class="chip" id="countChip">{{ $totalData }} data</span>
+            Data Presensi — {{ $namaBulan[$selMonth] }} {{ $selYear }}
+            <span class="chip" id="countChip">{{ $grouped->count() }} karyawan</span>
         </div>
 
-        <!-- RESULT BAR -->
         <div class="result-bar">
-            <span>
-                Menampilkan <strong id="shownFrom">1</strong>–<strong id="shownTo">30</strong>
-                dari <strong id="shownTotal">{{ $totalData }}</strong> data
-            </span>
+            <span>Menampilkan <strong id="shownFrom">1</strong>–<strong id="shownTo">30</strong> dari <strong id="shownTotal">{{ $grouped->count() }}</strong> karyawan</span>
             <div class="per-page-wrap">
                 Per halaman:
                 <select class="per-page-sel" id="perPageSel" onchange="changePerPage()">
@@ -635,58 +797,70 @@
             <table>
                 <thead>
                     <tr>
-                        <th>No</th><th>PIN</th><th>Nama Karyawan</th>
-                        <th>Tanggal</th><th>Waktu</th><th>Status</th><th>Keterangan</th>
+                        <th>No</th>
+                        <th>PIN</th>
+                        <th>Nama Karyawan</th>
+                        <th>Total Hadir</th>
+                        <th>Tepat Waktu</th>
+                        <th>Terlambat</th>
+                        <th>Pulang Cepat</th>
+                        <th>Terakhir Absen</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    @forelse($data as $i => $d)
+                    @forelse($grouped as $karyawanId => $records)
                     @php
-                        $waktu       = \Carbon\Carbon::parse($d->waktu_absensi);
-                        $isMasuk     = str_contains(strtolower($d->status_mesin), 'masuk');
-                        $terlambat   = $isMasuk  && $waktu->format('H:i:s') > '08:30:00';
-                        $pulangCepat = !$isMasuk && $waktu->format('H:i:s') < '15:30:00';
-                        $ketClass    = $terlambat ? 'terlambat' : ($pulangCepat ? 'cepat' : 'tepat');
+                        $kar       = $records->first()->karyawan;
+                        $hadirRecs = $records->filter(fn($r)=>str_contains(strtolower($r->status_mesin),'masuk'));
+                        $tepatK    = $hadirRecs->filter(fn($r)=>Carbon::parse($r->waktu_absensi)->format('H:i:s')<='08:30:00')->count();
+                        $lambatK   = $hadirRecs->filter(fn($r)=>Carbon::parse($r->waktu_absensi)->format('H:i:s')>'08:30:00')->count();
+                        $cepatK    = $records->filter(fn($r)=>!str_contains(strtolower($r->status_mesin),'masuk') && Carbon::parse($r->waktu_absensi)->format('H:i:s')<'15:30:00')->count();
+                        $lastRec   = $records->sortByDesc('waktu_absensi')->first();
+                        $lastTime  = Carbon::parse($lastRec->waktu_absensi);
+                        $hadirCount = $hadirRecs->count();
+                        $idx        = $loop->index;
                     @endphp
                     <tr class="tbl-row"
-                        data-index="{{ $i + 1 }}"
-                        data-nama="{{ strtolower($d->karyawan->nama) }}"
-                        data-tanggal="{{ $waktu->format('Y-m-d') }}"
-                        data-ket="{{ $ketClass }}">
-                        <td style="color:var(--textlight);font-size:12px;font-family:'JetBrains Mono',monospace" class="td-no">{{ str_pad($i+1,2,'0',STR_PAD_LEFT) }}</td>
-                        <td><span class="pin">{{ $d->karyawan->id_mesin }}</span></td>
+                        data-index="{{ $idx + 1 }}"
+                        data-nama="{{ strtolower($kar->nama) }}"
+                        data-ket="{{ $lambatK > 0 ? 'terlambat' : ($cepatK > 0 ? 'cepat' : 'tepat') }}"
+                        data-status="masuk">
+                        <td style="color:var(--textlight);font-size:12px;font-family:'JetBrains Mono',monospace" class="td-no">{{ str_pad($idx+1,2,'0',STR_PAD_LEFT) }}</td>
+                        <td><span class="pin">{{ $kar->id_mesin }}</span></td>
                         <td>
                             <div class="nama-cell">
-                                <div class="avatar">{{ strtoupper(substr($d->karyawan->nama,0,2)) }}</div>
-                                <span style="font-weight:600">{{ $d->karyawan->nama }}</span>
+                                <div class="avatar">{{ strtoupper(substr($kar->nama,0,2)) }}</div>
+                                <span style="font-weight:600">{{ $kar->nama }}</span>
                             </div>
                         </td>
-                        <td style="font-size:12px;color:var(--textmute)">{{ $waktu->translatedFormat('d M Y') }}</td>
-                        <td style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--textmute)">{{ $waktu->format('H:i:s') }}</td>
+                        <td><span class="badge b-hadir">{{ $hadirCount }}x hadir</span></td>
+                        <td><span class="badge b-tepat">{{ $tepatK }}x</span></td>
                         <td>
-                            @if($isMasuk)
-                                <span class="badge b-masuk">Absensi Masuk</span>
+                            @if($lambatK > 0)
+                            <span class="badge b-terlambat">{{ $lambatK }}x</span>
                             @else
-                                <span class="badge b-pulang">Absensi Pulang</span>
+                            <span style="color:var(--textlight);font-size:12px">—</span>
                             @endif
                         </td>
                         <td>
-                            @if($terlambat)
-                                <span class="badge b-terlambat">Terlambat</span>
-                            @elseif($pulangCepat)
-                                <span class="badge b-cepat">Pulang Cepat</span>
+                            @if($cepatK > 0)
+                            <span class="badge b-cepat">{{ $cepatK }}x</span>
                             @else
-                                <span class="badge b-tepat">Tepat Waktu</span>
+                            <span style="color:var(--textlight);font-size:12px">—</span>
                             @endif
+                        </td>
+                        <td style="font-size:12px;color:var(--textmute)">
+                            {{ $lastTime->translatedFormat('d M Y') }}
+                            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;display:block;color:var(--textlight)">{{ $lastTime->format('H:i') }}</span>
                         </td>
                     </tr>
                     @empty
                     <tr id="emptyInitialRow">
-                        <td colspan="7">
+                        <td colspan="8">
                             <div class="empty">
                                 <div class="empty-icon">&#128203;</div>
-                                <div class="empty-text">Belum ada data tersedia</div>
-                                <div class="empty-sub">Upload file CSV untuk memulai</div>
+                                <div class="empty-text">Belum ada data untuk periode ini</div>
+                                <div class="empty-sub">Upload file CSV atau pilih periode lain</div>
                             </div>
                         </td>
                     </tr>
@@ -695,267 +869,419 @@
             </table>
         </div>
 
-        <!-- PAGINATION BAR -->
         <div class="pg-bar">
             <div class="pg-info" id="pgInfo">Halaman 1 dari 1</div>
             <div class="pg-btns" id="pgBtns"></div>
         </div>
     </div>
 
-    <div class="footer">
-        &copy; {{ date('Y') }} <span>Kipin</span> &mdash; Sistem Monitoring Absensi &middot; Sakera
-    </div>
-
 </div>
+</div><!-- /page-main -->
 
-<!-- Chart.js CDN -->
+
+<!-- PAGE: REKAP BULANAN -->
+<div class="page" id="page-bulanan">
+<div class="inner-wrap" style="border-radius:16px">
+    <div class="card" style="margin-bottom:0">
+        <div class="rekap-header">
+            <div class="card-head-icon">
+                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            </div>
+            <span class="rekap-period-label">Rekap Bulanan</span>
+            <div class="period-select-wrap">
+                <select class="my-select" id="rekapBulanSel">
+                    @foreach($namaBulan as $num => $nm)
+                        @if($num > 0)
+                        <option value="{{ $num }}" {{ $num == $selMonth ? 'selected' : '' }}>{{ $nm }}</option>
+                        @endif
+                    @endforeach
+                </select>
+                <select class="my-select" id="rekapTahunSel">
+                    @for($y = now()->year; $y >= now()->year - 5; $y--)
+                    <option value="{{ $y }}" {{ $y == $selYear ? 'selected' : '' }}>{{ $y }}</option>
+                    @endfor
+                </select>
+                <button class="btn-apply" onclick="renderRekap()">Tampilkan</button>
+                <button class="btn-print" onclick="window.print()">
+                    <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    Print
+                </button>
+            </div>
+        </div>
+        <div class="period-chips" id="rekapChips">
+            <span class="period-chip pchip-total">Total: —</span>
+            <span class="period-chip pchip-hadir">Hadir: —</span>
+            <span class="period-chip pchip-lambat">Terlambat: —</span>
+            <span class="period-chip pchip-cepat">Pulang Cepat: —</span>
+        </div>
+        <div class="tbl-wrap">
+            <table class="rekap-tbl">
+                <thead>
+                    <tr>
+                        <th>No</th><th>PIN</th><th>Nama Karyawan</th>
+                        <th>Hari Hadir</th><th>Tepat Waktu</th>
+                        <th>Terlambat</th><th>Pulang Cepat</th><th>Kehadiran %</th>
+                    </tr>
+                </thead>
+                <tbody id="rekapBody">
+                    <tr><td colspan="8"><div class="empty"><div class="empty-icon">&#128197;</div><div class="empty-text">Pilih periode dan klik Tampilkan</div></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div><!-- /page-bulanan -->
+
+
+<!-- PAGE: REKAP MINGGUAN -->
+<div class="page" id="page-mingguan">
+<div class="inner-wrap" style="border-radius:16px">
+    <div class="card" style="margin-bottom:0">
+        <div class="rekap-header">
+            <div class="card-head-icon">
+                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+            </div>
+            <span class="rekap-period-label">Rekap Mingguan</span>
+            <div class="period-select-wrap">
+                <select class="my-select" id="mingguanBulanSel">
+                    @foreach($namaBulan as $num => $nm)
+                        @if($num > 0)
+                        <option value="{{ $num }}" {{ $num == $selMonth ? 'selected' : '' }}>{{ $nm }}</option>
+                        @endif
+                    @endforeach
+                </select>
+                <select class="my-select" id="mingguanTahunSel">
+                    @for($y = now()->year; $y >= now()->year - 5; $y--)
+                    <option value="{{ $y }}" {{ $y == $selYear ? 'selected' : '' }}>{{ $y }}</option>
+                    @endfor
+                </select>
+                <select class="my-select" id="mingguanWeekSel">
+                    <option value="1">Minggu ke-1</option>
+                    <option value="2">Minggu ke-2</option>
+                    <option value="3">Minggu ke-3</option>
+                    <option value="4">Minggu ke-4</option>
+                    <option value="5">Minggu ke-5</option>
+                </select>
+                <button class="btn-apply" onclick="renderMingguan()">Tampilkan</button>
+                <button class="btn-print" onclick="window.print()">
+                    <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    Print
+                </button>
+            </div>
+        </div>
+        <div class="period-chips" id="mingguanChips">
+            <span class="period-chip pchip-total">Total: —</span>
+            <span class="period-chip pchip-hadir">Hadir: —</span>
+            <span class="period-chip pchip-lambat">Terlambat: —</span>
+            <span class="period-chip pchip-cepat">Pulang Cepat: —</span>
+        </div>
+        <div class="tbl-wrap">
+            <table class="rekap-tbl">
+                <thead>
+                    <tr>
+                        <th>No</th><th>PIN</th><th>Nama Karyawan</th>
+                        <th>Hari Hadir</th><th>Tepat Waktu</th>
+                        <th>Terlambat</th><th>Pulang Cepat</th><th>Rentang Tanggal</th>
+                    </tr>
+                </thead>
+                <tbody id="mingguanBody">
+                    <tr><td colspan="8"><div class="empty"><div class="empty-icon">&#128197;</div><div class="empty-text">Pilih periode dan minggu, lalu klik Tampilkan</div></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div><!-- /page-mingguan -->
+
+</div><!-- /pages-container -->
+
+<div class="footer">
+    &copy; {{ date('Y') }} <span>Kipin</span> &mdash; Sistem Monitoring Absensi &middot; Sakera
+</div>
+</div><!-- /wrap -->
+</div><!-- /site-shell -->
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
 <script>
-    /* ── CLOCK ─────────────────────────────────────────── */
-    function tick() {
-        var d = new Date();
-        document.getElementById('liveClock').textContent = d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-        document.getElementById('liveDate').textContent  = d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    }
-    tick(); setInterval(tick, 1000);
+/* ── CLOCK ── */
+function tick() {
+    var d = new Date();
+    document.getElementById('liveClock').textContent = d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    document.getElementById('liveDate').textContent  = d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+tick(); setInterval(tick, 1000);
 
-    /* ── FILE NAME ─────────────────────────────────────── */
-    function showFileName(input) {
-        var el = document.getElementById('fileInfo');
-        if (input.files && input.files[0]) {
-            var f = input.files[0];
-            el.style.display = 'block';
-            el.innerHTML = '&#128196; <strong style="color:var(--accent)">' + f.name + '</strong> <span>(' + Math.round(f.size/1024) + ' KB) — siap diproses</span>';
-        } else { el.style.display = 'none'; }
-    }
+/* ── FILE NAME ── */
+function showFileName(input) {
+    var el = document.getElementById('fileInfo');
+    if (input.files && input.files[0]) {
+        var f = input.files[0];
+        el.style.display = 'block';
+        el.innerHTML = '&#128196; <strong style="color:var(--accent)">' + f.name + '</strong> <span>(' + Math.round(f.size/1024) + ' KB)</span>';
+    } else { el.style.display = 'none'; }
+}
 
-    /* ── DONUT CHART ───────────────────────────────────── */
-    var donutData   = [{{ $cTepat }}, {{ $cLambat }}, {{ $cCepat }}, {{ $cPulang }}];
-    var donutLabels = ['Tepat Waktu', 'Terlambat', 'Pulang Cepat', 'Absensi Pulang'];
-    var donutColors = ['#16a34a', '#d97706', '#e11d48', '#6366f1'];
-    var totalDonut  = {{ $totalData }};
+/* ── TAB SWITCHER ── */
+function switchTab(name) {
+    ['main','bulanan','mingguan'].forEach(function(t) {
+        document.getElementById('page-' + t).classList.toggle('active', t === name);
+        document.getElementById('tab-' + t).classList.toggle('active', t === name);
+    });
+}
 
-    var donutChart = new Chart(document.getElementById('donutChart'), {
-        type: 'doughnut',
-        data: {
-            labels: donutLabels,
-            datasets: [{
-                data: donutData,
-                backgroundColor: donutColors,
-                borderColor: '#ffffff',
-                borderWidth: 4,
-                hoverOffset: 10,
-                hoverBorderWidth: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '70%',
-            animation: { animateScale: true, duration: 900, easing: 'easeInOutQuart' },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function(ctx) {
-                            var pct = totalDonut > 0 ? Math.round(ctx.raw / totalDonut * 100) : 0;
-                            return '  ' + ctx.label + ': ' + ctx.raw + ' (' + pct + '%)';
-                        }
-                    },
-                    padding: 10,
-                    cornerRadius: 10,
-                    titleFont: { size: 13, weight: 'bold' },
-                    bodyFont: { size: 12 }
-                }
-            },
-            onHover: function(e, els) {
-                var numEl = document.getElementById('donutCenterNum');
-                var lblEl = document.getElementById('donutCenterLbl');
-                if (els.length) {
-                    var idx = els[0].index;
-                    numEl.textContent = donutData[idx];
-                    lblEl.textContent = donutLabels[idx];
-                    numEl.style.color = donutColors[idx];
-                } else {
-                    numEl.textContent = totalDonut;
-                    lblEl.textContent = 'total';
-                    numEl.style.color = 'var(--text)';
-                }
+/* ── DONUT CHART ── */
+var donutData   = [{{ $cTepat }}, {{ $cLambat }}, {{ $cCepat }}, {{ $cPulang }}];
+var donutLabels = ['Tepat Waktu','Terlambat','Pulang Cepat','Absensi Pulang'];
+var donutColors = ['#16a34a','#d97706','#e11d48','#6366f1'];
+var totalDonut  = {{ $totalData }};
+
+var donutChart = new Chart(document.getElementById('donutChart'), {
+    type: 'doughnut',
+    data: {
+        labels: donutLabels,
+        datasets: [{ data: donutData, backgroundColor: donutColors, borderColor: '#ffffff', borderWidth: 4, hoverOffset: 10 }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false, cutout: '70%',
+        animation: { animateScale: true, duration: 900, easing: 'easeInOutQuart' },
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: { label: function(ctx) { var pct = totalDonut > 0 ? Math.round(ctx.raw / totalDonut * 100) : 0; return '  ' + ctx.label + ': ' + ctx.raw + ' (' + pct + '%)'; } },
+                padding: 10, cornerRadius: 10
             }
+        },
+        onHover: function(e, els) {
+            var numEl = document.getElementById('donutCenterNum'), lblEl = document.getElementById('donutCenterLbl');
+            if (els.length) { var idx = els[0].index; numEl.textContent = donutData[idx]; lblEl.textContent = donutLabels[idx]; numEl.style.color = donutColors[idx]; }
+            else { numEl.textContent = totalDonut; lblEl.textContent = 'total'; numEl.style.color = 'var(--text)'; }
+        }
+    }
+});
+
+function highlightDonut(idx) {
+    donutChart.setActiveElements([{datasetIndex:0,index:idx}]);
+    donutChart.tooltip.setActiveElements([{datasetIndex:0,index:idx}],{x:0,y:0});
+    donutChart.update();
+    document.getElementById('donutCenterNum').textContent = donutData[idx];
+    document.getElementById('donutCenterNum').style.color = donutColors[idx];
+    document.getElementById('donutCenterLbl').textContent = donutLabels[idx];
+}
+function resetDonut() {
+    donutChart.setActiveElements([]); donutChart.tooltip.setActiveElements([],{x:0,y:0}); donutChart.update();
+    document.getElementById('donutCenterNum').textContent = totalDonut;
+    document.getElementById('donutCenterNum').style.color = 'var(--text)';
+    document.getElementById('donutCenterLbl').textContent = 'total';
+}
+
+/* ── PRINT ── */
+function printDashboard() {
+    var allRows = document.querySelectorAll('.tbl-row'), prev = [];
+    allRows.forEach(function(r,i){ prev[i]=r.style.display; r.style.display=''; });
+    window.print();
+    setTimeout(function(){ allRows.forEach(function(r,i){ r.style.display=prev[i]; }); }, 500);
+}
+
+/* ── PAGINATION ENGINE ── */
+var PER_PAGE = 30, currentPage = 1, filteredRows = [];
+
+function getFilteredRows() {
+    var name   = document.getElementById('searchName').value.toLowerCase().trim();
+    var status = document.getElementById('filterStatus').value;
+    var ket    = document.getElementById('filterKet').value;
+    return Array.from(document.querySelectorAll('.tbl-row')).filter(function(tr) {
+        return (!name   || tr.dataset.nama.includes(name))
+            && (!status || tr.dataset.status === status)
+            && (!ket    || tr.dataset.ket === ket);
+    });
+}
+
+function renderPage() {
+    filteredRows = getFilteredRows();
+    var total = filteredRows.length;
+    var tp    = Math.max(1, Math.ceil(total / PER_PAGE));
+    if (currentPage > tp) currentPage = tp;
+    Array.from(document.querySelectorAll('.tbl-row')).forEach(function(tr){ tr.style.display='none'; });
+    var start = (currentPage-1)*PER_PAGE, end = Math.min(start+PER_PAGE, total);
+    filteredRows.slice(start, end).forEach(function(tr, idx) {
+        tr.style.display='';
+        tr.style.animation='rowIn .3s '+(idx*0.025)+'s ease both';
+        var noCell = tr.querySelector('.td-no');
+        if (noCell) noCell.textContent = String(start+idx+1).padStart(2,'0');
+    });
+    var from = total===0 ? 0 : start+1;
+    document.getElementById('shownFrom').textContent  = from;
+    document.getElementById('shownTo').textContent    = end;
+    document.getElementById('shownTotal').textContent = total;
+    document.getElementById('countChip').textContent  = total + ' karyawan';
+    var emptyRow = document.getElementById('emptyFilterRow');
+    if (total===0 && document.querySelectorAll('.tbl-row').length>0) {
+        if (!emptyRow) {
+            var tr = document.createElement('tr'); tr.id='emptyFilterRow';
+            tr.innerHTML='<td colspan="8"><div class="empty"><div class="empty-icon">&#128269;</div><div class="empty-text">Data tidak ditemukan</div></div></td>';
+            document.getElementById('tableBody').appendChild(tr);
+        }
+    } else if (emptyRow) { emptyRow.remove(); }
+    renderPagination(tp, total);
+}
+
+function renderPagination(tp, total) {
+    var wrap = document.getElementById('pgBtns'); wrap.innerHTML='';
+    document.getElementById('pgInfo').textContent = total===0 ? 'Tidak ada data' : 'Halaman '+currentPage+' dari '+tp;
+    if (total===0) return;
+    function mkBtn(label, page, disabled, active) {
+        var b = document.createElement('button');
+        b.className = 'pg-btn'+(active?' pg-active':''); b.innerHTML=label; b.disabled=disabled;
+        b.onclick = function(){ currentPage=page; renderPage(); };
+        wrap.appendChild(b);
+    }
+    function mkE() { var s=document.createElement('span'); s.className='pg-ellipsis'; s.textContent='…'; wrap.appendChild(s); }
+    mkBtn('&#8592;', currentPage-1, currentPage===1, false);
+    var pages=[];
+    if(tp<=7){ for(var i=1;i<=tp;i++) pages.push(i); }
+    else {
+        pages.push(1);
+        if(currentPage>3) pages.push('…');
+        var lo=Math.max(2,currentPage-1), hi=Math.min(tp-1,currentPage+1);
+        for(var i=lo;i<=hi;i++) pages.push(i);
+        if(currentPage<tp-2) pages.push('…');
+        pages.push(tp);
+    }
+    pages.forEach(function(p){ if(p==='…') mkE(); else mkBtn(p,p,false,p===currentPage); });
+    mkBtn('&#8594;', currentPage+1, currentPage===tp, false);
+}
+
+function filterTable() { currentPage=1; renderPage(); }
+function resetFilter() {
+    document.getElementById('searchName').value='';
+    document.getElementById('filterStatus').value='';
+    document.getElementById('filterKet').value='';
+    filterTable();
+}
+function changePerPage() { PER_PAGE=parseInt(document.getElementById('perPageSel').value); currentPage=1; renderPage(); }
+renderPage();
+
+/* ── RAW DATA ── */
+@php
+$rawJs = $data->map(function($d) {
+    $w = \Carbon\Carbon::parse($d->waktu_absensi);
+    return [
+        'kid'     => $d->karyawan_id,
+        'nama'    => $d->karyawan->nama,
+        'pin'     => $d->karyawan->id_mesin,
+        'bulan'   => (int)$w->format('m'),
+        'tahun'   => (int)$w->format('Y'),
+        'hariKe'  => (int)$w->format('j'),
+        'jam'     => $w->format('H:i:s'),
+        'isMasuk' => str_contains(strtolower($d->status_mesin), 'masuk'),
+    ];
+})->values();
+@endphp
+var RAW = @json($rawJs);
+
+/* ── REKAP HELPER ── */
+function groupByKar(records) {
+    var map = {};
+    records.forEach(function(r) {
+        if (!map[r.kid]) map[r.kid] = { kid: r.kid, nama: r.nama, pin: r.pin, hadir: 0, tepat: 0, lambat: 0, cepat: 0, days: {} };
+        var g = map[r.kid];
+        if (r.isMasuk) {
+            g.days[r.hariKe] = true;
+            if (r.jam <= '08:30:00') g.tepat++; else g.lambat++;
+        } else {
+            if (r.jam < '15:30:00') g.cepat++;
         }
     });
+    Object.values(map).forEach(function(g){ g.hadir = Object.keys(g.days).length; });
+    return Object.values(map).sort(function(a,b){ return a.nama.localeCompare(b.nama); });
+}
 
-    function highlightDonut(idx) {
-        donutChart.setActiveElements([{ datasetIndex: 0, index: idx }]);
-        donutChart.tooltip.setActiveElements([{ datasetIndex: 0, index: idx }], { x: 0, y: 0 });
-        donutChart.update();
-        document.getElementById('donutCenterNum').textContent = donutData[idx];
-        document.getElementById('donutCenterNum').style.color = donutColors[idx];
-        document.getElementById('donutCenterLbl').textContent = donutLabels[idx];
+function badgeNum(n, type) {
+    if (n === 0) return '<span style="color:var(--textlight);font-size:12px">—</span>';
+    var cls = type === 'lambat' ? 'b-terlambat' : type === 'cepat' ? 'b-cepat' : 'b-tepat';
+    return '<span class="badge ' + cls + '">' + n + 'x</span>';
+}
+
+/* ── REKAP BULANAN ── */
+function renderRekap() {
+    var bulan = parseInt(document.getElementById('rekapBulanSel').value);
+    var tahun = parseInt(document.getElementById('rekapTahunSel').value);
+    var recs  = RAW.filter(function(r){ return r.bulan === bulan && r.tahun === tahun; });
+    var karList = groupByKar(recs);
+    var totalHadir = 0, totalTepat = 0, totalLambat = 0, totalCepat = 0;
+    karList.forEach(function(k){ totalHadir += k.hadir; totalTepat += k.tepat; totalLambat += k.lambat; totalCepat += k.cepat; });
+    var chips = document.getElementById('rekapChips').children;
+    chips[0].textContent = 'Karyawan: ' + karList.length;
+    chips[1].textContent = 'Hadir: ' + totalHadir + ' hari';
+    chips[2].textContent = 'Terlambat: ' + totalLambat + 'x';
+    chips[3].textContent = 'Pulang Cepat: ' + totalCepat + 'x';
+    if (karList.length === 0) {
+        document.getElementById('rekapBody').innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-icon">&#128269;</div><div class="empty-text">Tidak ada data untuk periode ini</div></div></td></tr>';
+        return;
     }
+    var d = new Date(tahun, bulan-1, 1), workDays = 0;
+    while (d.getMonth() === bulan-1) { var wd = d.getDay(); if (wd !== 0 && wd !== 6) workDays++; d.setDate(d.getDate()+1); }
+    var html = '';
+    karList.forEach(function(k, i) {
+        var pct = workDays > 0 ? Math.min(100, Math.round(k.hadir / workDays * 100)) : 0;
+        var pctColor = pct >= 90 ? '#16a34a' : pct >= 75 ? '#d97706' : '#e11d48';
+        html += '<tr class="tbl-row">' +
+            '<td style="color:var(--textlight);font-size:12px;font-family:monospace">' + String(i+1).padStart(2,'0') + '</td>' +
+            '<td><span class="pin">' + k.pin + '</span></td>' +
+            '<td><div class="nama-cell"><div class="avatar">' + k.nama.substring(0,2).toUpperCase() + '</div><span style="font-weight:600">' + k.nama + '</span></div></td>' +
+            '<td><span class="badge b-hadir">' + k.hadir + ' hari</span></td>' +
+            '<td>' + badgeNum(k.tepat, 'tepat') + '</td>' +
+            '<td>' + badgeNum(k.lambat, 'lambat') + '</td>' +
+            '<td>' + badgeNum(k.cepat, 'cepat') + '</td>' +
+            '<td style="min-width:120px"><div style="font-size:12px;font-weight:700;color:' + pctColor + '">' + pct + '%</div>' +
+                '<div class="prog-wrap"><div class="prog-bar" style="width:' + pct + '%;background:' + pctColor + '"></div></div>' +
+                '<div style="font-size:10px;color:var(--textmute);margin-top:2px">' + k.hadir + '/' + workDays + ' hari kerja</div>' +
+            '</td></tr>';
+    });
+    document.getElementById('rekapBody').innerHTML = html;
+}
 
-    function resetDonut() {
-        donutChart.setActiveElements([]);
-        donutChart.tooltip.setActiveElements([], { x: 0, y: 0 });
-        donutChart.update();
-        document.getElementById('donutCenterNum').textContent = totalDonut;
-        document.getElementById('donutCenterNum').style.color = 'var(--text)';
-        document.getElementById('donutCenterLbl').textContent = 'total';
+/* ── REKAP MINGGUAN ── */
+function renderMingguan() {
+    var bulan   = parseInt(document.getElementById('mingguanBulanSel').value);
+    var tahun   = parseInt(document.getElementById('mingguanTahunSel').value);
+    var minggu  = parseInt(document.getElementById('mingguanWeekSel').value);
+    var startDate = (minggu - 1) * 7 + 1;
+    var endDate   = Math.min(minggu * 7, new Date(tahun, bulan, 0).getDate());
+    if (startDate > new Date(tahun, bulan, 0).getDate()) {
+        document.getElementById('mingguanBody').innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-icon">&#128197;</div><div class="empty-text">Minggu ke-' + minggu + ' tidak ada di bulan ini</div></div></td></tr>';
+        return;
     }
-
-    /* ── PRINT PDF ─────────────────────────────────────── */
-    function printDashboard() {
-        /* Saat print, tampilkan semua baris tabel */
-        var allRows = document.querySelectorAll('.tbl-row');
-        var prevDisplay = [];
-        allRows.forEach(function(r, i) {
-            prevDisplay[i] = r.style.display;
-            r.style.display = '';
-        });
-
-        window.print();
-
-        /* Kembalikan state setelah print */
-        setTimeout(function() {
-            allRows.forEach(function(r, i) {
-                r.style.display = prevDisplay[i];
-            });
-        }, 500);
+    var recs = RAW.filter(function(r){ return r.bulan===bulan && r.tahun===tahun && r.hariKe>=startDate && r.hariKe<=endDate; });
+    var karList = groupByKar(recs);
+    var totalHadir=0, totalTepat=0, totalLambat=0, totalCepat=0;
+    karList.forEach(function(k){ totalHadir+=k.hadir; totalTepat+=k.tepat; totalLambat+=k.lambat; totalCepat+=k.cepat; });
+    var namaBulanArr = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+    var rentang = startDate + ' – ' + endDate + ' ' + namaBulanArr[bulan] + ' ' + tahun;
+    var chips = document.getElementById('mingguanChips').children;
+    chips[0].textContent = 'Karyawan: ' + karList.length;
+    chips[1].textContent = 'Hadir: ' + totalHadir + ' hari';
+    chips[2].textContent = 'Terlambat: ' + totalLambat + 'x';
+    chips[3].textContent = 'Pulang Cepat: ' + totalCepat + 'x';
+    if (karList.length === 0) {
+        document.getElementById('mingguanBody').innerHTML = '<tr><td colspan="8"><div class="empty"><div class="empty-icon">&#128269;</div><div class="empty-text">Tidak ada data untuk periode ini</div></div></td></tr>';
+        return;
     }
-
-    /* ── PAGINATION ENGINE ─────────────────────────────── */
-    var PER_PAGE    = 30;
-    var currentPage = 1;
-    var filteredRows = [];
-
-    function getFilteredRows() {
-        var name = document.getElementById('searchName').value.toLowerCase().trim();
-        var date = document.getElementById('filterDate').value;
-        var ket  = document.getElementById('filterKet').value;
-        return Array.from(document.querySelectorAll('.tbl-row')).filter(function(tr) {
-            return (!name || tr.dataset.nama.includes(name))
-                && (!date || tr.dataset.tanggal === date)
-                && (!ket  || tr.dataset.ket === ket);
-        });
-    }
-
-    function renderPage() {
-        filteredRows = getFilteredRows();
-        var total = filteredRows.length;
-        var tp    = Math.max(1, Math.ceil(total / PER_PAGE));
-        if (currentPage > tp) currentPage = tp;
-
-        /* Sembunyikan semua baris */
-        Array.from(document.querySelectorAll('.tbl-row')).forEach(function(tr) {
-            tr.style.display = 'none';
-        });
-
-        /* Tampilkan slice halaman ini */
-        var start = (currentPage - 1) * PER_PAGE;
-        var end   = Math.min(start + PER_PAGE, total);
-        filteredRows.slice(start, end).forEach(function(tr, idx) {
-            tr.style.display = '';
-            tr.style.animation = 'rowIn .3s ' + (idx * 0.025) + 's ease both';
-            var noCell = tr.querySelector('.td-no');
-            if (noCell) {
-                var globalNo = start + idx + 1;
-                noCell.textContent = String(globalNo).padStart(2, '0');
-            }
-        });
-
-        /* Update result bar */
-        var from = total === 0 ? 0 : start + 1;
-        var to   = end;
-        document.getElementById('shownFrom').textContent  = from;
-        document.getElementById('shownTo').textContent    = to;
-        document.getElementById('shownTotal').textContent = total;
-        document.getElementById('countChip').textContent  = total + ' data';
-
-        /* Empty state filter */
-        var emptyRow = document.getElementById('emptyFilterRow');
-        if (total === 0 && document.querySelectorAll('.tbl-row').length > 0) {
-            if (!emptyRow) {
-                var tr = document.createElement('tr');
-                tr.id  = 'emptyFilterRow';
-                tr.innerHTML = '<td colspan="7"><div class="empty"><div class="empty-icon">&#128269;</div><div class="empty-text">Data tidak ditemukan</div><div class="empty-sub">Coba ubah kata kunci atau filter</div></div></td>';
-                document.getElementById('tableBody').appendChild(tr);
-            }
-        } else if (emptyRow) {
-            emptyRow.remove();
-        }
-
-        renderPagination(tp, total);
-    }
-
-    function renderPagination(tp, total) {
-        var wrap = document.getElementById('pgBtns');
-        wrap.innerHTML = '';
-        document.getElementById('pgInfo').textContent =
-            total === 0 ? 'Tidak ada data' : 'Halaman ' + currentPage + ' dari ' + tp;
-        if (total === 0) return;
-
-        function mkBtn(label, page, disabled, active) {
-            var b = document.createElement('button');
-            b.className = 'pg-btn' + (active ? ' pg-active' : '');
-            b.innerHTML = label;
-            b.disabled  = disabled;
-            b.onclick   = function() { currentPage = page; renderPage(); };
-            wrap.appendChild(b);
-        }
-
-        function mkEllipsis() {
-            var s = document.createElement('span');
-            s.className   = 'pg-ellipsis';
-            s.textContent = '…';
-            wrap.appendChild(s);
-        }
-
-        mkBtn('&#8592;', currentPage - 1, currentPage === 1, false);
-
-        var pages = [];
-        if (tp <= 7) {
-            for (var i = 1; i <= tp; i++) pages.push(i);
-        } else {
-            pages.push(1);
-            if (currentPage > 3) pages.push('…');
-            var lo = Math.max(2, currentPage - 1);
-            var hi = Math.min(tp - 1, currentPage + 1);
-            for (var i = lo; i <= hi; i++) pages.push(i);
-            if (currentPage < tp - 2) pages.push('…');
-            pages.push(tp);
-        }
-
-        pages.forEach(function(p) {
-            if (p === '…') { mkEllipsis(); }
-            else { mkBtn(p, p, false, p === currentPage); }
-        });
-
-        mkBtn('&#8594;', currentPage + 1, currentPage === tp, false);
-    }
-
-    /* ── FILTER ────────────────────────────────────────── */
-    function filterTable() {
-        currentPage = 1;
-        renderPage();
-    }
-
-    function resetFilter() {
-        document.getElementById('searchName').value = '';
-        document.getElementById('filterDate').value = '';
-        document.getElementById('filterKet').value  = '';
-        filterTable();
-    }
-
-    /* ── PER PAGE ──────────────────────────────────────── */
-    function changePerPage() {
-        PER_PAGE    = parseInt(document.getElementById('perPageSel').value);
-        currentPage = 1;
-        renderPage();
-    }
-
-    /* ── INIT ──────────────────────────────────────────── */
-    renderPage();
+    var html = '';
+    karList.forEach(function(k, i) {
+        html += '<tr class="tbl-row">' +
+            '<td style="color:var(--textlight);font-size:12px;font-family:monospace">' + String(i+1).padStart(2,'0') + '</td>' +
+            '<td><span class="pin">' + k.pin + '</span></td>' +
+            '<td><div class="nama-cell"><div class="avatar">' + k.nama.substring(0,2).toUpperCase() + '</div><span style="font-weight:600">' + k.nama + '</span></div></td>' +
+            '<td><span class="badge b-hadir">' + k.hadir + ' hari</span></td>' +
+            '<td>' + badgeNum(k.tepat, 'tepat') + '</td>' +
+            '<td>' + badgeNum(k.lambat, 'lambat') + '</td>' +
+            '<td>' + badgeNum(k.cepat, 'cepat') + '</td>' +
+            '<td style="font-size:12px;color:var(--textmute)">' + rentang + '</td>' +
+            '</tr>';
+    });
+    document.getElementById('mingguanBody').innerHTML = html;
+}
 </script>
 </body>
 </html>
