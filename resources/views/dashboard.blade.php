@@ -174,6 +174,9 @@
         .emp-card:hover{border-color:rgba(99,102,241,0.35);background:#fff;transform:translateY(-2px);box-shadow:0 8px 24px rgba(99,102,241,0.13);}
         .emp-card.selected{border-color:var(--accent);background:#fff;box-shadow:0 8px 28px rgba(99,102,241,0.18);}
         .emp-card.selected::before{background:linear-gradient(90deg,var(--accent),var(--teal));}
+        /* Dim card if zero data in selected period */
+        .emp-card.no-data{opacity:0.55;filter:grayscale(0.3);}
+        .emp-card.no-data:hover{opacity:0.75;filter:none;}
         .emp-card-badge{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--accent);display:none;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(99,102,241,0.4);}
         .emp-card.selected .emp-card-badge{display:flex;}
         .emp-card-badge svg{width:10px;height:10px;stroke:#fff;fill:none;stroke-width:3;}
@@ -185,6 +188,9 @@
         .emp-card-stat{text-align:center;padding:7px 4px;border-radius:9px;background:rgba(255,255,255,0.8);border:1px solid rgba(0,0,0,0.04);}
         .emp-card-stat-num{font-size:17px;font-weight:800;line-height:1;}
         .emp-card-stat-lbl{font-size:8px;font-weight:700;color:var(--textmute);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+        /* No-data badge on card */
+        .emp-nodata-badge{display:none;position:absolute;bottom:10px;right:10px;font-size:9px;font-weight:700;background:#f1f5f9;color:var(--textmute);border:1px solid #e2e8f0;padding:2px 7px;border-radius:20px;}
+        .emp-card.no-data .emp-nodata-badge{display:block;}
 
         /* ══════════════════════════════════════
            PERFORMA PAGE — BAR CHART
@@ -551,6 +557,8 @@ var PALETTE=[
         for(var y=nowY;y>=nowY-5;y--){var o=document.createElement('option');o.value=y;o.textContent=y;if(y===nowY)o.selected=true;sel.appendChild(o);}
     });
     document.getElementById('filterBulan').value=nowM;
+    /* Set performa bulan filter to current month too */
+    document.getElementById('filterBulanPerf').value=nowM;
 })();
 
 /* RAW DATA */
@@ -628,24 +636,51 @@ function groupByKaryawan(bulan,tahun,withFilters){
    PERFORMA PAGE — DATA FUNCTIONS
 ════════════════════════════════════════════ */
 
-/* Get all unique employees in a year */
-function getEmployeesForYear(tahun){
-    var pinMap={},pinOrder=[];
+/**
+ * getEmployeesForPeriod — FIXED
+ * Sekarang menggunakan bulan filter juga.
+ * bulan=0 → semua bulan dalam tahun; bulan>0 → bulan spesifik.
+ * Semua karyawan yang punya data di TAHUN itu tetap ditampilkan,
+ * tapi stats-nya dihitung berdasarkan bulan yang dipilih.
+ * Karyawan tanpa data di bulan terpilih → totalDays/terlambat/pulangCepat = 0.
+ */
+function getEmployeesForPeriod(tahun, bulan){
+    /* Step 1: Kumpulkan semua PIN unik untuk tahun ini */
+    var allPinsInYear={};
     RAW_DATA.filter(function(r){return r.tahun===tahun;}).forEach(function(r){
-        if(!pinMap[r.pin]){pinMap[r.pin]={pin:r.pin,nama:r.nama,dateSet:{}};pinOrder.push(r.pin);}
-        var dk=r.tanggal;
-        if(!pinMap[r.pin].dateSet[dk]) pinMap[r.pin].dateSet[dk]={masuk:false,terlambat:false,pulangCepat:false};
-        if(r.isMasuk){pinMap[r.pin].dateSet[dk].masuk=true;if(r.terlambat)pinMap[r.pin].dateSet[dk].terlambat=true;}
-        else{if(r.pulangCepat)pinMap[r.pin].dateSet[dk].pulangCepat=true;}
+        if(!allPinsInYear[r.pin]) allPinsInYear[r.pin]={pin:r.pin,nama:r.nama};
     });
-    return pinOrder.map(function(pin){
-        var k=pinMap[pin];
-        var days=Object.values(k.dateSet);
-        return{
-            pin:k.pin, nama:k.nama,
-            totalDays:days.filter(function(d){return d.masuk;}).length,
-            terlambat:days.filter(function(d){return d.terlambat;}).length,
-            pulangCepat:days.filter(function(d){return d.pulangCepat;}).length
+
+    /* Step 2: Hitung stats berdasarkan periode yang dipilih */
+    var pinStatsMap={};
+    var relevantData=RAW_DATA.filter(function(r){
+        if(r.tahun!==tahun) return false;
+        if(bulan>0 && r.bulan!==bulan) return false;
+        return true;
+    });
+
+    relevantData.forEach(function(r){
+        if(!pinStatsMap[r.pin]) pinStatsMap[r.pin]={dateSet:{}};
+        var dk=r.tanggal;
+        if(!pinStatsMap[r.pin].dateSet[dk]) pinStatsMap[r.pin].dateSet[dk]={masuk:false,terlambat:false,pulangCepat:false};
+        if(r.isMasuk){
+            pinStatsMap[r.pin].dateSet[dk].masuk=true;
+            if(r.terlambat) pinStatsMap[r.pin].dateSet[dk].terlambat=true;
+        } else {
+            if(r.pulangCepat) pinStatsMap[r.pin].dateSet[dk].pulangCepat=true;
+        }
+    });
+
+    /* Step 3: Build result — semua karyawan di tahun ini, stats dari periode filter */
+    return Object.keys(allPinsInYear).map(function(pin){
+        var info=allPinsInYear[pin];
+        var statsData=pinStatsMap[pin]?Object.values(pinStatsMap[pin].dateSet):[];
+        return {
+            pin: info.pin,
+            nama: info.nama,
+            totalDays: statsData.filter(function(d){return d.masuk;}).length,
+            terlambat: statsData.filter(function(d){return d.terlambat;}).length,
+            pulangCepat: statsData.filter(function(d){return d.pulangCepat;}).length
         };
     });
 }
@@ -691,10 +726,13 @@ function renderPerfPage(){
     document.getElementById('perfPeriodHint').textContent=bulan===0
         ?'📅 Menampilkan data seluruh bulan dalam tahun terpilih'
         :'📅 Menampilkan data harian bulan '+NAMA_BULAN[bulan]+' '+tahun;
-    var emps=getEmployeesForYear(tahun);
+
+    /* ── FIXED: gunakan bulan dalam getEmployeesForPeriod ── */
+    var emps=getEmployeesForPeriod(tahun, bulan);
     document.getElementById('empCountChip').textContent=emps.length+' karyawan';
-    renderEmpSelector(emps,tahun);
-    // Re-render chart if employee was selected
+    renderEmpSelector(emps,tahun,bulan);
+
+    /* Re-render chart if employee was selected */
     if(selectedEmpPin){
         var emp=emps.find(function(e){return e.pin===selectedEmpPin;});
         if(emp) buildBarChart(selectedEmpPin,emp.nama,selectedEmpColor,tahun,bulan);
@@ -702,7 +740,7 @@ function renderPerfPage(){
     }
 }
 
-function renderEmpSelector(emps,tahun){
+function renderEmpSelector(emps,tahun,bulan){
     var grid=document.getElementById('empSelectorGrid');
     grid.innerHTML='';
     if(emps.length===0){
@@ -713,8 +751,12 @@ function renderEmpSelector(emps,tahun){
         var color=PALETTE[i%PALETTE.length];
         var initials=emp.nama.substring(0,2).toUpperCase();
         var isSelected=emp.pin===selectedEmpPin;
+        var hasData=emp.totalDays>0||emp.terlambat>0||emp.pulangCepat>0;
+
         var card=document.createElement('div');
-        card.className='emp-card'+(isSelected?' selected':'');
+        /* Tambahkan class no-data jika tidak ada data di periode ini */
+        card.className='emp-card'+(isSelected?' selected':'')+(hasData?'':' no-data');
+
         card.innerHTML=
             '<div class="emp-card-badge"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>'+
             '<div class="emp-card-header">'+
@@ -725,20 +767,21 @@ function renderEmpSelector(emps,tahun){
                 '</div>'+
             '</div>'+
             '<div class="emp-card-stats">'+
-                '<div class="emp-card-stat"><div class="emp-card-stat-num" style="color:'+color+'">'+emp.totalDays+'</div><div class="emp-card-stat-lbl">Hari</div></div>'+
-                '<div class="emp-card-stat"><div class="emp-card-stat-num" style="color:#d97706">'+emp.terlambat+'</div><div class="emp-card-stat-lbl">Lambat</div></div>'+
-                '<div class="emp-card-stat"><div class="emp-card-stat-num" style="color:#e11d48">'+emp.pulangCepat+'</div><div class="emp-card-stat-lbl">Cepat</div></div>'+
-            '</div>';
-        (function(pin,nama,col,tahunVal,cardEl){
+                '<div class="emp-card-stat"><div class="emp-card-stat-num" style="color:'+(hasData?color:'#94a3b8')+'">'+emp.totalDays+'</div><div class="emp-card-stat-lbl">Hari</div></div>'+
+                '<div class="emp-card-stat"><div class="emp-card-stat-num" style="color:'+(emp.terlambat>0?'#d97706':'#94a3b8')+'">'+emp.terlambat+'</div><div class="emp-card-stat-lbl">Lambat</div></div>'+
+                '<div class="emp-card-stat"><div class="emp-card-stat-num" style="color:'+(emp.pulangCepat>0?'#e11d48':'#94a3b8')+'">'+emp.pulangCepat+'</div><div class="emp-card-stat-lbl">Cepat</div></div>'+
+            '</div>'+
+            '<div class="emp-nodata-badge">Tidak ada data</div>';
+
+        (function(pin,nama,col,tahunVal,bulanVal,cardEl){
             cardEl.onclick=function(){
                 selectedEmpPin=pin;
                 selectedEmpColor=col;
                 document.querySelectorAll('.emp-card').forEach(function(c){c.classList.remove('selected');});
                 cardEl.classList.add('selected');
-                var bulanVal=parseInt(document.getElementById('filterBulanPerf').value);
                 buildBarChart(pin,nama,col,tahunVal,bulanVal);
             };
-        })(emp.pin,emp.nama,color,tahun,card);
+        })(emp.pin,emp.nama,color,tahun,bulan,card);
         grid.appendChild(card);
     });
 }
@@ -810,7 +853,8 @@ function buildBarChart(pin,nama,color,tahun,bulan){
     /* Empty state */
     if(!monthData.length){
         if(empBarChartInstance){empBarChartInstance.destroy();empBarChartInstance=null;}
-        document.getElementById('empBarChart').getContext('2d').clearRect(0,0,9999,9999);
+        var ctx2=document.getElementById('empBarChart').getContext('2d');
+        ctx2.clearRect(0,0,9999,9999);
         return;
     }
 
@@ -823,7 +867,7 @@ function buildBarChart(pin,nama,color,tahun,bulan){
 
     var ctx=document.getElementById('empBarChart').getContext('2d');
 
-    /* Cyan/teal gradient for main bars — like reference image */
+    /* Cyan/teal gradient for main bars */
     var gradMain=ctx.createLinearGradient(0,0,0,400);
     gradMain.addColorStop(0,'#0096c7');
     gradMain.addColorStop(0.5,'#00b4d8');
@@ -836,141 +880,44 @@ function buildBarChart(pin,nama,color,tahun,bulan){
     var datasets=[];
 
     if(currentBarMode==='all'||currentBarMode==='hadir'){
-        datasets.push({
-            label:'Total Hadir',
-            type:'bar',
-            data:hadirData,
-            backgroundColor:gradMain,
-            borderColor:'rgba(0,119,182,0.3)',
-            borderWidth:1,
-            borderRadius:6,
-            borderSkipped:false,
-            order:2
-        });
-        datasets.push({
-            label:'Tepat Waktu',
-            type:'bar',
-            data:tepatData,
-            backgroundColor:gradTepat,
-            borderColor:'rgba(0,119,182,0.2)',
-            borderWidth:1,
-            borderRadius:6,
-            borderSkipped:false,
-            order:3
-        });
+        datasets.push({label:'Total Hadir',type:'bar',data:hadirData,backgroundColor:gradMain,borderColor:'rgba(0,119,182,0.3)',borderWidth:1,borderRadius:6,borderSkipped:false,order:2});
+        datasets.push({label:'Tepat Waktu',type:'bar',data:tepatData,backgroundColor:gradTepat,borderColor:'rgba(0,119,182,0.2)',borderWidth:1,borderRadius:6,borderSkipped:false,order:3});
     }
-
     if(currentBarMode==='all'||currentBarMode==='late'){
-        datasets.push({
-            label:'Terlambat',
-            type:'bar',
-            data:lateData,
-            backgroundColor:'rgba(251,191,36,0.85)',
-            borderColor:'rgba(217,119,6,0.3)',
-            borderWidth:1,
-            borderRadius:6,
-            borderSkipped:false,
-            order:4
-        });
-        datasets.push({
-            label:'Pulang Cepat',
-            type:'bar',
-            data:earlyData,
-            backgroundColor:'rgba(251,113,133,0.85)',
-            borderColor:'rgba(225,29,72,0.3)',
-            borderWidth:1,
-            borderRadius:6,
-            borderSkipped:false,
-            order:5
-        });
+        datasets.push({label:'Terlambat',type:'bar',data:lateData,backgroundColor:'rgba(251,191,36,0.85)',borderColor:'rgba(217,119,6,0.3)',borderWidth:1,borderRadius:6,borderSkipped:false,order:4});
+        datasets.push({label:'Pulang Cepat',type:'bar',data:earlyData,backgroundColor:'rgba(251,113,133,0.85)',borderColor:'rgba(225,29,72,0.3)',borderWidth:1,borderRadius:6,borderSkipped:false,order:5});
     }
-
-    /* Trend line on total hadir */
     if(currentBarMode==='all'||currentBarMode==='hadir'){
-        datasets.push({
-            label:'Tren Kehadiran',
-            type:'line',
-            data:hadirData,
-            borderColor:'#023e8a',
-            backgroundColor:'transparent',
-            borderWidth:2.5,
-            tension:0.45,
-            pointRadius:5,
-            pointBackgroundColor:'#023e8a',
-            pointBorderColor:'#fff',
-            pointBorderWidth:2,
-            pointHoverRadius:8,
-            fill:false,
-            order:1
-        });
+        datasets.push({label:'Tren Kehadiran',type:'line',data:hadirData,borderColor:'#023e8a',backgroundColor:'transparent',borderWidth:2.5,tension:0.45,pointRadius:5,pointBackgroundColor:'#023e8a',pointBorderColor:'#fff',pointBorderWidth:2,pointHoverRadius:8,fill:false,order:1});
     }
 
     empBarChartInstance=new Chart(ctx,{
         type:'bar',
         data:{labels:labels,datasets:datasets},
         options:{
-            responsive:true,
-            maintainAspectRatio:false,
+            responsive:true,maintainAspectRatio:false,
             interaction:{mode:'index',intersect:false},
             plugins:{
-                legend:{
-                    display:true,
-                    position:'top',
-                    labels:{
-                        usePointStyle:true,
-                        pointStyle:'rectRounded',
-                        font:{family:'Plus Jakarta Sans',size:11,weight:'700'},
-                        color:'#64748b',
-                        padding:18,
-                        boxWidth:14,boxHeight:14
-                    }
-                },
+                legend:{display:true,position:'top',labels:{usePointStyle:true,pointStyle:'rectRounded',font:{family:'Plus Jakarta Sans',size:11,weight:'700'},color:'#64748b',padding:18,boxWidth:14,boxHeight:14}},
                 tooltip:{
                     callbacks:{
-                        title:function(items){
-                            var d=monthData[items[0].dataIndex];
-                            if(isMonthMode) return d.tanggal+' ('+NAMA_BULAN[bulan]+' '+tahun+')';
-                            return NAMA_BULAN[d.bulan]+' '+tahun;
-                        },
-                        label:function(ctx){return ' '+ctx.dataset.label+': '+ctx.raw+(isMonthMode?' hari':' hari');}
+                        title:function(items){var d=monthData[items[0].dataIndex];if(isMonthMode)return d.tanggal+' ('+NAMA_BULAN[bulan]+' '+tahun+')';return NAMA_BULAN[d.bulan]+' '+tahun;},
+                        label:function(ctx){return ' '+ctx.dataset.label+': '+ctx.raw+' hari';}
                     },
-                    padding:12,cornerRadius:12,
-                    backgroundColor:'rgba(2,62,138,0.94)',
-                    titleFont:{family:'Plus Jakarta Sans',size:13,weight:'800'},
-                    bodyFont:{family:'Plus Jakarta Sans',size:12},
-                    titleColor:'#bae6fd',
-                    bodyColor:'#e0f2fe',
-                    borderColor:'rgba(0,180,216,0.3)',
-                    borderWidth:1
+                    padding:12,cornerRadius:12,backgroundColor:'rgba(2,62,138,0.94)',
+                    titleFont:{family:'Plus Jakarta Sans',size:13,weight:'800'},bodyFont:{family:'Plus Jakarta Sans',size:12},
+                    titleColor:'#bae6fd',bodyColor:'#e0f2fe',borderColor:'rgba(0,180,216,0.3)',borderWidth:1
                 }
             },
             scales:{
-                x:{
-                    grid:{display:false},
-                    ticks:{font:{family:'Plus Jakarta Sans',size:11,weight:'600'},color:'#64748b'},
-                    border:{display:false}
-                },
-                y:{
-                    beginAtZero:true,
-                    grid:{color:'rgba(0,150,199,0.08)',drawBorder:false},
-                    ticks:{
-                        font:{family:'JetBrains Mono',size:10},
-                        color:'#94a3b8',
-                        stepSize:1,
-                        padding:8,
-                        callback:function(v){return Number.isInteger(v)?v:'';}
-                    },
-                    border:{display:false}
-                }
+                x:{grid:{display:false},ticks:{font:{family:'Plus Jakarta Sans',size:11,weight:'600'},color:'#64748b'},border:{display:false}},
+                y:{beginAtZero:true,grid:{color:'rgba(0,150,199,0.08)',drawBorder:false},ticks:{font:{family:'JetBrains Mono',size:10},color:'#94a3b8',stepSize:1,padding:8,callback:function(v){return Number.isInteger(v)?v:'';}},border:{display:false}}
             },
             animation:{duration:700,easing:'easeInOutQuart'}
         }
     });
 
-    /* Scroll chart into view */
-    setTimeout(function(){
-        document.getElementById('empChartCard').scrollIntoView({behavior:'smooth',block:'nearest'});
-    },80);
+    setTimeout(function(){document.getElementById('empChartCard').scrollIntoView({behavior:'smooth',block:'nearest'});},80);
 }
 
 /* Yearly/Monthly stat strip */
