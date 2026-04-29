@@ -350,10 +350,10 @@
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>
             <input type="text" id="email" name="email"
-                   value="{{ old('email') }}"
-                   placeholder="admin@123.id"
-                   class="{{ $errors->has('email') ? 'is-invalid' : '' }}"
-                   required />
+                    value="{{ old('email') }}"
+                    {{-- placeholder="admin@123.id" --}}
+                    class="{{ $errors->has('email') ? 'is-invalid' : '' }}"
+                    required />
         </div>
         @error('email') <p class="error-msg">{{ $message }}</p> @enderror
 
@@ -363,10 +363,10 @@
                 <rect x="3" y="11" width="18" height="11" rx="2"/>
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
-            <input type="password" id="password" name="password"
-                   placeholder="••••••••"
-                   class="{{ $errors->has('password') ? 'is-invalid' : '' }}"
-                   required />
+                <input type="password" id="password" name="password"
+                    {{-- placeholder="••••••••" --}}
+                    class="{{ $errors->has('password') ? 'is-invalid' : '' }}"
+                    required />
         </div>
         @error('password') <p class="error-msg">{{ $message }}</p> @enderror
 
@@ -390,7 +390,7 @@
         <p>Hanya untuk administrator sistem rekapitulasi absensi PresenskiKu.</p>
     </div>
 
-    <div class="footer-r">© 2026 PresenskiKu — Sistem Monitoring Absensi</div>
+    <div class="footer-r" style="color: rgb(88, 133, 165)">© 2026 PresenskiKu — Sistem Monitoring Absensi</div>
 </div>
 
 <script>
