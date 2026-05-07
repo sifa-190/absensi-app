@@ -19,7 +19,6 @@ class AttendanceController extends Controller
 
     // ══════════════════════════════════════════
     // IMPORT CSV — dengan normalisasi & cek duplikat
-    // Menggantikan importCsv() yang lama
     // ══════════════════════════════════════════
     public function import(Request $request)
     {
@@ -104,7 +103,7 @@ class AttendanceController extends Controller
             }
         }
 
-        $reportStr = implode(' | ', $fileReports);
+        $reportStr = implode('<br>', $fileReports);
 
         // ── RESPON ──
         if ($totalInserted === 0 && $totalDuplicate > 0) {

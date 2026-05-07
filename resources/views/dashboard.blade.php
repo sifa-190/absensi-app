@@ -401,12 +401,12 @@
 
             @if(session('success'))
             <div class="alert-ok" id="alertSuccess">
-                Upload berhasil — {{ session('success') }}
+                {!! session('success') !!}
             </div>
             @endif
             @if(session('error'))
             <div class="alert-err" id="alertError">
-                Upload gagal — {{ session('error') }}
+                {!! session('error') !!}
             </div>
             @endif
 
@@ -416,7 +416,7 @@
                     var err = document.getElementById('alertError');
                     if(ok)  { ok.style.transition='opacity 0.8s'; ok.style.opacity='0'; setTimeout(function(){ ok.remove(); }, 800); }
                     if(err) { err.style.transition='opacity 0.8s'; err.style.opacity='0'; setTimeout(function(){ err.remove(); }, 800); }
-                }, 7000); 
+                }, 12000); 
             </script>
 
         <div class="card">
