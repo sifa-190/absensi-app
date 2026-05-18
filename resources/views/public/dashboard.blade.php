@@ -421,7 +421,7 @@
                     <div class="emp-table-meta">
                         <span class="emp-table-pin" id="empTablePin">—</span>
                         <span class="emp-table-days" id="empTableDays">0 hari</span>
-                    </div>
+                    </div>   
                 </div>
                 <div class="emp-table-stats" id="empTableStats"></div>
             </div>
