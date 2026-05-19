@@ -733,7 +733,7 @@ function onDonutHover(els) {
     var data=donutChart.data.datasets[0].data, total=data.reduce(function(a,b){return a+b;},0);
     var nE=document.getElementById('donutCenterNum'), lE=document.getElementById('donutCenterLbl');
     if (els.length) { var i=els[0].index; nE.textContent=data[i]; nE.style.color=DONUT_COLORS[i]; lE.textContent=DONUT_LABELS[i]; }
-    else { nE.textContent=total; nE.style.color='var(--text)'; lE.t extContent='total'; }
+    else { nE.textContent=total; nE.style.color='var(--text)'; lE.textContent='total'; }
 }
 
 function updateDonut(vals) {
