@@ -43,6 +43,20 @@ $app->singleton(
 
 /*
 |--------------------------------------------------------------------------
+| Force HTTPS on Production
+|--------------------------------------------------------------------------
+|
+| Memaksa semua URL menggunakan HTTPS saat aplikasi berjalan
+| di environment production. Tidak berpengaruh di lokal.
+|
+*/
+
+if (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'production') {
+    \Illuminate\Support\Facades\URL::forceScheme('https');
+}
+
+/*
+|--------------------------------------------------------------------------
 | Return The Application
 |--------------------------------------------------------------------------
 |
