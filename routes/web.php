@@ -18,12 +18,17 @@ Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showRese
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 // ────────────────────────────────────────────────────────────
 
+// ── Public Dashboard (sudah ada sebelumnya) ─────────────────
 Route::get('/karyawan', [PublicDashboardController::class, 'index'])->name('public.dashboard');
+
+// Sesudah — pakai controller, $data otomatis dikirim
+Route::get('/karyawan/dashboard', [PublicDashboardController::class, 'index'])
+    ->name('karyawan.dashboard');
+// ────────────────────────────────────────────────────────────
 
 Route::middleware('auth')->group(function () {
 
     Route::get('/', [AttendanceController::class, 'index'])->name('dashboard');
-
     Route::post('/import-presensi', [AttendanceController::class, 'import'])->name('import.presensi');
 
 });
