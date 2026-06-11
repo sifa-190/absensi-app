@@ -14,7 +14,7 @@ class AttendanceController extends Controller
     public function index()
     {
         $data = PresensiMentah::with('karyawan')->get();
-        return view('dashboard', compact('data'));
+        return view('admin-dashboard', compact('data'));
     }
 
     // ══════════════════════════════════════════
